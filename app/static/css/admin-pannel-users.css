@@ -1,0 +1,104 @@
+.table .title #export-users {
+    position: absolute;
+    right: 120px;
+    top: 12px;
+    color: var(--valid-green);
+}
+
+.table .header {
+    grid-template-columns: 0.7fr 0.7fr 1fr 0.5fr 0.5fr 0.5fr 0.5fr 0.5fr !important;
+    text-align: center;
+}
+
+.entry {
+    grid-template-columns: 0.7fr 0.7fr 1fr 0.5fr 0.5fr 0.5fr 0.5fr 0.5fr !important;
+}
+
+.entry .cell {
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.entry .cell.profile {
+    justify-content: normal !important;
+}
+
+.entry .cell.lastName {
+    justify-content: normal !important;
+}
+
+.entry .cell.entity {
+    justify-content: normal !important;
+}
+
+.entry .cell.approbation {
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.entry .cell.cell.approbation img {
+    width: 30px;
+    height: 30px;
+}
+
+.entry .cell.approbation.approved {
+    color: var(--valid-green);
+    border-radius: 10px;
+}
+
+.entry .cell.approbation.pending {
+    color: var(--pending-orange);
+    border-radius: 10px;
+}
+
+.entry .cell.approbation.invalid {
+    color: var(--invalid-red);
+    border-radius: 10px;
+}
+
+.user-dialog .submit-zone {
+    align-self: flex-end;
+    display: flex;
+    gap: 40px;
+}
+
+.user-dialog input {
+    outline: none;
+    border: none;
+    border-bottom: 1px solid var(--main-blue);
+}
+
+.user-dialog select {
+    background-color: transparent;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid var(--main-blue);
+}
+
+.user-dialog .submit-zone button[type="submit"] {
+    background-color: var(--invalid-red);
+    color: white;
+}
+
+.user-dialog .submit-zone button[type="submit"]:hover {
+    background-color: var(--invalid-red-dark);
+}
+
+.user-dialog input.invalid {
+    border-bottom: 1px solid var(--invalid-red);
+}
+
+#add-user-success-without-plate-dialog h3 {
+    color: var(--pending-orange);
+}
+
+#add-user-failed-dialog h3 {
+    color: var(--invalid-red);
+}

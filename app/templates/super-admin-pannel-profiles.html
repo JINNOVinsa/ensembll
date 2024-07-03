@@ -1,0 +1,247 @@
+{% extends 'super-admin-pannel.html' %}
+
+{% block additionnalHead %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/admin-pannel.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/super-admin-pannel-profiles.css')}}">
+<title>Park7 - Profils</title>
+{% endblock %}
+
+{% block tableTitle %}
+<label>Liste des profils disponibles par établissement</label>
+
+{% if userHierarchy == 2 %}
+<button class="add-btn" id="add-profile-btn">Ajouter</button>
+{% endif %}
+{% endblock %}
+{% block tableBody %}
+{% for entity_id, data in profiles_by_entity.items() %}
+{% if data.profiles | length > 0 %}
+<div class="entity" id="{{entity_id}}">
+<label class="entity-name">{{ data.entity.eName }}</label>
+</div>
+<div class="entry">
+    <label class="profile-title">Nom du profil</label>
+    <label class="profile-criticity">Criticité associée</label>
+</div>
+{% for profile in data.profiles %}
+<div class="entry" id="{{profile[0]}}">
+    <label class="profile-title">{{profile[1]}}</label>
+    <label class="profile-criticity">{{profile[2]}}</label>
+
+    <button class="time-slots" type="button">Plages horaires</button>
+    <button class="edit-profile" type="button">Editer</button>
+    <button class="delete-profile" type="button">Supprimer</button>
+</div>
+{% endfor %}
+{% else %}
+<p>Aucun profil renseigné pour {{ data.entity.eName }}, ajoutez-en en cliquant sur "Ajouter"</p>
+{% endif %}
+{% endfor %}
+{% endblock %}
+
+{% block underTable %}
+
+<dialog class="user-dialog" id="add-profile-dialog">
+    <form id="add-profile-form" action="{{url_for('addProfile')}}" method="POST">
+        <h3>Ajouter un nouveau profil d'utilisateur</h3>
+
+        <div class="content">
+            <label for="entity-select" class="selector-label">Etablissement</label>
+            <select name="entity" id="input-entity" required>
+                {% for entity_id, data in profiles_by_entity.items() %}
+                    {% if data.can_add %}
+                        <option value="{{ entity_id }}">{{ data.entity.eName }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+
+            <label for="name">Nom du nouveau profil</label>
+            <input type="text" name="name" id="input-name" placeholder="Nom du profil" required>
+
+            <label for="criticity">Criticité du profil</label>
+            <input type="number" name="criticity" id="input-criticity" value="0" placeholder="Criticité" required>
+        </div>
+
+        <div class="submit-zone">
+            <button class="dialog close-user-dialog cancel" id="cancel-add" type="button">Annuler</button>
+            <button class="dialog close-user-dialog danger" id="submit-add" type="submit">Ajouter</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="add-profile-success-dialog">
+    <form action="{{url_for('superAdminPannelProfiles')}}" method="get">
+        <h3>Profil ajouté avec success</h3>
+
+        <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="add-profile-failed-dialog">
+    <form method="dialog">
+        <h3>Echec de l'ajout du profil pour une raison inconnue</h3>
+
+        <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="time-slots-dialog">
+    <form method="dialog" id="time-slots-form">
+        <h3>Plages horaires de criticité pour le profil: <span id="profile-headline"></span></h3>
+
+        <div class="content">
+
+
+        </div>
+
+        <div class="submit-zone">
+            <button id="add-time-slot" type="button">Ajouter une plage</button>
+            <button type="submit">Fermer</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="add-time-slot-dialog">
+    <form action="{{url_for('superAdminPannelAddTimeSlot')}}" method="POST" id="add-time-slot-form">
+        <h3>Nouvelle plage horaire</h3>
+
+        <div id="time-slots-inputs">
+            <label for="start">Début:</label>
+            <input name="start" type="text" value="08:00" placeholder="hh:mm">
+
+            <label for="end">Fin:</label>
+            <input name="end" type="text" value="12:00" placeholder="hh:mm">
+
+            <label for="level">Niveau supplémentaire:</label>
+            <input name="level" type="number" value="1">
+        </div>
+
+        <button type="submit">Ajouter</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="add-time-slot-failed">
+    <form method="dialog">
+        <h3>Impossible d'ajouter la plage horaire. Vérifiez les champs saisis</h3>
+
+        <button type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="confirm-delete-time-slot-dialog">
+    <form action="{{url_for('superAdminPannelDeleteTimeSlot')}}" method="POST" id="delete-time-slot-form">
+        <h3>Êtes-vous sûr de vouloir supprimer cette plage horaire ?</h3>
+
+        <div class="submit-zone">
+            <button type="button">Annuler</button>
+            <button type="submit">Supprimer</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="confirm-delete-time-slot-failed">
+    <form method="dialog">
+        <h3>Impossible de supprimer la période sélectionnée</h3>
+
+        <button type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="edit-profile-dialog">
+    <form id="edit-profile-form" method="dialog">
+        <h3>Modifier le profil: <span id="profile-headline"></span></h3>
+
+        <div class="content">
+            <label for="name">Modifier le nom</label>
+            <input type="text" name="name" id="input-name">
+
+            <label for="criticity">Modifier la criticité</label>
+            <input type="number" name="criticity" id="input-criticity">
+        </div>
+
+        <div class="confirm-zone">
+            <input type="checkbox" name="valid-cb" id="input-valid-checkbox">
+            <label for="input-valid-checkbox">Je confirme que ces changements sont corrects</label>
+        </div>
+
+        <div class="submit-zone">
+            <button class="dialog close-user-dialog cancel" id="cancel-edit" type="button">Annuler</button>
+            <button class="dialog close-user-dialog danger" id="submit-edit" type="submit"
+                disabled="true">Confirmer</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="confirm-edit-profile-dialog">
+    <form id="confirm-edit-profile-form" action="{{url_for('editProfile')}}" method="dialog">
+        <h3>Résumé de vos changements:</h3>
+
+        <label>Nom du profil: <span id="new-name-profile"></span></label>
+
+        <label>Criticité du profil: <span id="new-criticity-profile"></span></label>
+
+        <div class="submit-zone">
+            <button class="dialog close-user-dialog cancel" id="cancel-edit" type="button">Annuler</button>
+            <button class="dialog close-user-dialog danger" id="submit-edit" type="submit">Confirmer</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog class="user-dialog dialog-profile-result" id="edit-profile-success-dialog">
+    <form action="{{url_for('superAdminPannelProfiles')}}" method="get">
+        <h3>Modifications effectuées avec succès</h3>
+
+        <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
+    </form>
+</dialog>
+
+
+<dialog class="user-dialog dialog-profile-result" id="edit-profile-failed-dialog">
+    <form action="{{url_for('superAdminPannelProfiles')}}" method="get">
+        <h3>Echec de la modification du profil pour une raison inconnue</h3>
+
+        <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="delete-profile-dialog">
+    <form id="delete-profile-form" action="{{url_for('deleteProfile')}}" method="dialog">
+        <h3>Supprimer le profil: <span id="profile-headline"></span></h3>
+
+        <div class="confirm-zone">
+            <input type="checkbox" name="valid-cb" id="delete-input-valid-checkbox">
+            <label for="delete-input-valid-checkbox">Je confirme vouloir supprimer ce profil</label>
+        </div>
+
+        <div class="submit-zone">
+            <button class="dialog close-user-dialog cancel" id="cancel-delete" type="button">Annuler</button>
+            <button class="dialog close-user-dialog danger" id="submit-delete" type="submit"
+                disabled="true">Supprimer</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog class="user-dialog dialog-profile-result" id="delete-profile-success-dialog">
+    <form action="{{url_for('superAdminPannelProfiles')}}" method="get">
+        <h3>Suppression effectuée avec succès</h3>
+
+        <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
+    </form>
+</dialog>
+
+
+<dialog class="user-dialog dialog-profile-result" id="delete-profile-failed-dialog">
+    <form action="{{url_for('superAdminPannelProfiles')}}" method="get">
+        <h3>Echec de la suppression du profil pour une raison inconnue</h3>
+
+        <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
+    </form>
+</dialog>
+
+{% endblock %}
+
+{% block additionnalScript %}
+<script src="{{url_for('static', filename='js/super-admin-pannel-profiles.js')}}"></script>
+<script src="{{url_for('static', filename='js/super-admin-pannel-add-profile.js')}}"></script>
+<script src="{{url_for('static', filename='js/super-admin-pannel-profiles-time-slots.js')}}"></script>
+{% endblock %}

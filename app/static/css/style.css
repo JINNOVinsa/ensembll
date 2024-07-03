@@ -1,0 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+@import url("vars.css");
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+}
+
+header {
+    width: 100vw;
+    background-color: white;
+    position: sticky;
+    top: 0;
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+
+    box-sizing: border-box;
+    padding-left: 10%;
+    padding-right: 10%;
+
+    z-index: 1;
+    box-shadow: 0 3px 7px black;
+}
+
+header>a {
+    text-decoration: none;
+    color: black;
+
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+}
+
+header img {
+    width: auto;
+    height: 45px;
+}
+
+header nav {
+    width: 100%;
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 40px;
+}
+
+header h1 {
+    font-size: 1.7rem;
+}
+
+#profile-icon, #logout {
+    display: block;
+    width: 40px;
+    height: 40px;
+}
+
+#notifications {
+    display: block;
+    width: 27px;
+    height: 27px;
+}
+
+#profile-icon svg {
+    stroke: var(--main-blue);
+}
+
+#notifications svg {
+    fill: var(--main-blue);
+}
+
+main {
+    width: 80%;
+    margin-top: 60px;
+    
+    flex-grow: 1;
+}
+
+.greet {
+    font-size: 1.7rem;
+}
+
+dialog {
+    padding: 40px;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0px 0px 0px 100vw #606060aa;
+    background-color: #fff;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+span {
+    font-weight: 700;
+}
+
+button {
+    all: unset;
+}
+
+button:disabled {
+    background-color: var(--disabled-color);
+}
+
+.horizontal-line {
+    border-top: 1px solid rgb(53, 53, 53);
+}

@@ -1,0 +1,186 @@
+.table .title {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.table .title #total_spots_headline {
+    position: absolute;
+    right: 0%;
+    font-weight: 400;
+    font-size: 1rem;
+}
+
+.table .header {
+    grid-template-columns: 0.7fr 0.7fr 0.3fr 0.3fr !important;
+}
+
+.entry {
+    grid-template-columns: 0.7fr 0.7fr 0.3fr 0.3fr !important;
+}
+
+.edit-spots {
+    background-color: var(--pending-orange) !important;
+}
+
+.edit-spots:hover {
+    background-color: var(--pending-orange-dark) !important;
+}
+
+.entity-spots {
+    font-weight: 700;
+    color: var(--invalid-red);
+}
+
+#edit-spots-dialog label {
+    display: inline;
+    width: fit-content;
+}
+
+#edit-spots-dialog input {
+    width: 100px;
+    margin-left: 16px;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid var(--main-blue);
+}
+
+#edit-spots-dialog input::-webkit-outer-spin-button,
+#edit-spots-dialog input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+#edit-spots-dialog input[type=number] {
+  -moz-appearance: textfield;
+}
+
+#edit-spots-dialog #submit-zone {
+    width: fit-content;
+    align-self: flex-end;
+    
+    display: flex;
+    gap: 16px;
+}
+
+#edit-spots-dialog button {
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: var(--hover-grey);
+    font-weight: 700;
+}
+
+#edit-spots-dialog button:hover {
+    background-color: var(--hover-grey);
+}
+
+#edit-spots-failed label {
+    color: var(--invalid-red);
+}
+
+#edit-spots-success button, #edit-spots-failed button {
+    width: fit-content;
+    align-self: flex-end;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: var(--main-blue);
+    font-weight: 700;
+}
+
+#edit-spots-success button:hover, #edit-spots-failed button:hover {
+    background-color: var(--hover-grey);
+}
+
+.add-entity {
+    color: var(--main-blue);
+    background: white;
+    border: none;
+    border-radius: 5px;
+
+    cursor: pointer;
+
+    padding: 10px 15px 10px 15px;
+
+    font-size: 1em;
+    font-weight: 700;
+}
+
+/* Style général pour les dialogues */
+dialog.user-dialog {
+    width: auto;
+    padding: 20px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+/* Style pour les titres des dialogues */
+dialog.user-dialog h3 {
+    margin: 0;
+    margin-bottom: 20px;
+    color: var(--main-blue);
+    font-size: 1.5rem;
+}
+
+/* Style pour le contenu des dialogues */
+dialog.user-dialog .content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Style pour les labels et les champs de saisie */
+dialog.user-dialog label {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+dialog.user-dialog input[type="text"],
+dialog.user-dialog input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--main-blue);
+    border-radius: 5px;
+    outline: none;
+}
+
+/* Style pour la zone de soumission */
+dialog.user-dialog #submit-zone {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+/* Style pour les boutons */
+dialog.user-dialog button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+dialog.user-dialog button:hover {
+    background-color: var(--hover-grey);
+}
+
+/* Style spécifique pour les boutons de confirmation et d'annulation */
+dialog.user-dialog button[type="submit"] {
+    background-color: var(--main-blue);
+    color: white;
+}
+
+dialog.user-dialog button[type="button"] {
+    background-color: var(--invalid-red);
+    color: white;
+}
+
+.delete-entity {
+    background-color: var(--invalid-red) !important;
+}
+
+.delete-entity:hover {
+    background-color: var(--invalid-red-dark) !important;
+}

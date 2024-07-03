@@ -1,0 +1,23 @@
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10%;
+}
+
+main h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+main h2 {
+    font-size: 1.7rem;
+    font-weight: 400;
+}
+
+main a {
+    text-decoration: none;
+    color: var(--main-blue);
+    font-weight: 700;
+}

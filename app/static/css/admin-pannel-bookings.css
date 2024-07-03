@@ -1,0 +1,340 @@
+.table .header {
+    grid-template-columns: 0.75fr 0.75fr repeat(5, 1fr) 0.5fr 0.5fr;
+}
+
+.entry {
+    grid-template-columns: 0.75fr 0.75fr repeat(5, 1fr) 0.5fr 0.5fr !important;
+}
+
+#expand-booking-dialog .content {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+}
+
+#expand-booking-dialog .content .cell {
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#expand-booking-dialog .content .cell label{
+    width: fit-content;
+}
+
+#expand-booking-dialog .content .cell.span-two {
+    grid-column: auto / span 2;
+}
+
+#expand-booking-dialog .content .cell.span-three {
+    grid-column: auto / span 3;
+}
+
+#expand-booking-dialog .content .cell:nth-child(7) {
+    grid-column: 1 / span 3;
+}
+
+#expand-booking-dialog .content .cell:nth-child(8) {
+    grid-column: 4 / span 3;
+}
+
+#expand-booking-dialog .content .title {
+    text-align: start;
+}
+
+#expand-booking-dialog .content .optionnal {
+    display: none;
+}
+
+#expand-booking-dialog .content span {
+    font-style: normal;
+    color: black;
+    font-weight: 400;
+}
+
+#add-booking-failed form {
+    max-width: 500px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#add-booking-failed button {
+    align-self: flex-end;
+    color: var(--main-blue);
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+#add-booking-failed button:hover {
+    background-color: var(--hover-grey);
+}
+
+.add-booking-popup {
+    width: 800px;
+    max-width: 800px;
+}
+
+.add-booking-popup .headline {
+    display: grid;
+    grid-template-columns: 1fr 40px;
+    margin-bottom: 50px;
+
+    align-items: center;
+}
+
+.add-booking-popup .headline .close {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.add-booking-popup .headline .close>img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+}
+
+.add-booking-popup #edit-booking {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    row-gap: 40px;
+}
+
+.add-booking-popup #edit-booking .row {
+    display: flex;
+    flex-direction: column;
+    grid-column: 1 / -1;
+}
+
+.add-booking-popup #edit-booking .row .cell>label,
+.add-booking-popup #edit-booking .row>label {
+    font-weight: 700;
+}
+
+.add-booking-popup #edit-booking select {
+    height: 30px;
+
+    background-color: transparent;
+    outline: none;
+    border: none;
+    border-bottom: 3px var(--main-blue) solid;
+
+    font-size: 1em;
+}
+
+.add-booking-popup #edit-booking .row#infos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    row-gap: 40px;
+    column-gap: 50px;
+}
+
+.add-booking-popup #edit-booking .row#infos .cell {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.add-booking-popup #edit-booking .row#datetimes {
+    display: grid;
+    grid-template-columns: 240px 140px;
+    grid-auto-flow: row;
+    align-items: center;
+    gap: 12px;
+}
+
+.add-booking-popup #edit-booking .row#datetimes #start {
+    grid-column: 1 / 3;
+}
+
+.add-booking-popup .book .pick-label {
+    width: fit-content;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.date {
+    width: fit-content;
+    /*max-width: 250px;*/
+}
+
+.add-booking-popup .book .pick-label input {
+    max-width: 100%;
+    border: none;
+    background-color: transparent;
+    outline: none;
+
+    font-size: 1em;
+}
+
+.add-booking-popup .book .pick-label:hover {
+    background-color: #e7e7e7;
+}
+
+.add-booking-popup form button {
+    align-self: flex-end;
+    width: 8rem;
+    color: white;
+    font-size: 1.2em;
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--main-blue);
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.add-booking-popup .book button:hover {
+    background-color: var(--main-blue-dark);
+    cursor: pointer;
+}
+
+.add-booking-popup .book button:disabled {
+    background-color: var(--disabled-color);
+    cursor: auto;
+}
+
+.add-booking-popup .row#end-recurrence {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+}
+
+.add-booking-popup .row#end-recurrence label {
+    width: fit-content;
+}
+
+.add-booking-popup#edit-booking-custom-dialog {
+    width: 400px;
+}
+
+.add-booking-popup#edit-booking-custom-dialog .headline {
+    margin-bottom: 25px;
+}
+
+.add-booking-popup#edit-booking-custom-dialog .headline .close>img {
+    width: 30px;
+    height: 30px;
+}
+
+.add-booking-popup#edit-booking-custom-dialog form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.add-booking-popup#edit-booking-custom-dialog form>label,
+.add-booking-popup#edit-booking-custom-dialog form>div>label {
+    font-weight: 700;
+}
+
+.add-booking-popup#edit-booking-custom-dialog #custom-recurrence-week {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+.add-booking-popup#edit-booking-custom-dialog #custom-recurrence-week #day-pins {
+    height: fit-content;
+}
+
+.add-booking-popup#edit-booking-custom-dialog #custom-recurrence-week input[type="checkbox"]:not(:checked),
+.add-booking-popup#edit-booking-custom-dialog #custom-recurrence-week input[type="checkbox"]:checked {
+    position: absolute;
+    left: -99999%;
+}
+
+.add-booking-popup#edit-booking-custom-dialog #custom-recurrence-week input[type="checkbox"] + label {
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 50%;
+    padding: 5px 10px;
+    background-color: rgb(214, 214, 214);
+    text-align: center;
+    vertical-align: middle;
+}
+
+.add-booking-popup#edit-booking-custom-dialog #custom-recurrence-week input[type="checkbox"]:not(:checked) + label {
+    background-color: rgb(214, 214, 214);
+    color: black;
+}
+
+.add-booking-popup#edit-booking-custom-dialog #custom-recurrence-week input[type="checkbox"]:checked + label {
+    background-color: var(--main-blue);
+    color: white;
+}
+
+.add-booking-popup#edit-booking-custom-dialog form>button {
+    align-self: flex-end;
+    padding: 10px 15px 10px 15px;
+}
+
+.add-booking-popup#edit-booking-custom-dialog #custom-recurrence-wrapper {
+    display: flex;
+    gap: 15px;
+}
+
+.add-booking-popup#edit-booking-custom-dialog #custom-recurrence-wrapper label {
+    background-color: #e7e7e7;
+}
+
+.add-booking-popup#edit-booking-custom-dialog #custom-recurrence-wrapper label:hover {
+    background-color: rgb(214, 214, 214);
+}
+
+.add-booking-popup#edit-booking-custom-dialog #custom-recurrence-wrapper input {
+    width: 50px;
+}
+
+.add-booking-popup#edit-booking-custom-dialog #custom-recurrence-wrapper select {
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.add-booking-popup#edit-booking-custom-dialog #custom-recurrence-wrapper select:hover {
+    background-color: rgb(214, 214, 214);
+}
+
+.submit-zone {
+    align-self: flex-end;
+    display: flex;
+    gap: 30px;
+}
+
+.submit-zone #delete-booking {
+    background-color: var(--invalid-red);
+}
+
+.submit-zone #delete-booking:hover {
+    background-color: var(--invalid-red-dark);
+}
+
+.user-dialog button {
+    padding: 10px;
+    align-self: flex-end;
+    color: var(--main-blue);
+    font-weight: 700;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.user-dialog button:hover {
+    background-color: var(--hover-grey);
+}
+
+.user-dialog button.danger {
+    color: red;
+}

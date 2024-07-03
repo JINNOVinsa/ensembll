@@ -1,0 +1,101 @@
+.submit-profile-btn {
+    background-color: var(--valid-green) !important;
+}
+
+.submit-profile-btn:hover {
+    background-color: var(--valid-green-dark) !important;
+}
+
+.submit-profile-btn:disabled {
+    background-color: grey !important;
+    cursor: not-allowed;
+}
+
+.submit-profile-btn:hover:disabled {
+    background-color: rgb(94, 93, 93) !important;
+}
+
+.user-dialog .submit-zone {
+    align-self: flex-end;
+    display: flex;
+    gap: 40px;
+}
+
+.user-dialog input {
+    outline: none;
+    border: none;
+    border-bottom: 1px solid var(--main-blue);
+}
+
+.user-dialog select {
+    background-color: transparent;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid var(--main-blue);
+}
+
+.user-dialog .submit-zone button[type="submit"] {
+    background-color: var(--invalid-red);
+    color: white;
+}
+
+.user-dialog .submit-zone button[type="submit"]:hover {
+    background-color: var(--invalid-red-dark);
+}
+
+.user-dialog input.invalid {
+    border-bottom: 1px solid var(--invalid-red);
+}
+
+#confirm-user-ask-dialog {
+    max-width: 500px;
+}
+
+#confirm-user-ask-dialog form {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+#confirm-user-ask-dialog #btns {
+    width: 100%;
+    display: flex;
+    gap: 30px;
+    justify-content: flex-end;
+}
+
+#confirm-user-ask-dialog button {
+    width: 30%;
+}
+
+#confirm-user-ask-dialog p {
+    line-height: 2rem;
+}
+
+#confirm-success-dialog {
+    width: 500px;
+}
+
+#confirm-success-dialog form {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+#confirm-success-dialog button {
+    width: 25%;
+    align-self: flex-end;
+    color: var(--main-blue);
+}
+
+#confirm-failed-dialog form {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+#confirm-failed-dialog button {
+    width: 25%;
+    align-self: flex-end;
+    color: var(--main-blue);
+}

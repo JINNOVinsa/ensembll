@@ -1,0 +1,17 @@
+@media screen and (max-width: 600px) {
+    #in-header-critical-open {
+        display: none;
+    }
+
+    #under-header-critical-open {
+        display: block;
+        position: absolute;
+        top: 60px;
+        right: 5%;
+
+        background-color: transparent;
+        color: var(--invalid-red);
+        font-weight: 900;
+        cursor: pointer;
+    }
+}

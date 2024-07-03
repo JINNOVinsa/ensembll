@@ -1,0 +1,39 @@
+@media screen and (max-width: 800px){
+    main {
+        margin-bottom: 50px;
+    }
+
+    .container {
+        width: 100%;
+        margin-top: 50px;
+    }
+}
+
+@media screen and (max-width: 600px){
+    dialog {
+        min-width: 85vw;
+        max-width: 95vw !important;
+        padding: 15px;
+        border-radius: 5px;
+
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    main {
+        width: 95%;
+    }
+
+    .container .general {
+        border: none;
+    }
+
+    .container .general .row#plates {
+        row-gap: 10px;
+    }
+
+    .container .general .row#plates label {
+        width: 210px;
+    }
+}

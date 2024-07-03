@@ -1,0 +1,129 @@
+{% extends 'super-admin-pannel.html' %}
+
+{% block additionnalHead %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/super-admin-allocation.css')}}">
+{% endblock %}
+
+{% block tableTitle %}
+<label>Répartition des places par structure</label>
+<label id="total_spots_headline">Places de parking: {{total_spots}}</label>
+{% endblock %}
+
+{% block tableHeader %}
+<label>Structure</label>
+<label>Places allouées</label>
+{% endblock %}
+
+{% block tableBody %}
+{% for e in entry %}
+    <div class="entry" id="{{e['id']}}">
+        <label class="entity-title">{{e['name']}}</label>
+        <label class="entity-spots">{{e['allocated']}}</label>
+
+        <button class="edit-spots" type="button">Modifier</button>
+        <button class="delete-entity" type="button">Supprimer</button>
+    </div>
+{% endfor %}
+    <button class="add-entity" id="add-entity" type="button">Ajouter un établissement</button>
+{% endblock %}
+
+{% block underTable %}
+<dialog class="user-dialog" id="edit-spots-dialog">
+    <form action="{{url_for('editAllocation')}}" method="post">
+        <h3>Modifier la répartition pour <span id="spots-entity-name"></span></h3>
+
+        <div>
+            <label for="entity-spots">Nombre de places disponible : {{nbFreePlaces}}</label>
+            <input type="number" name="nbFreePlaces" id="nbFreePlaces" value="{{nbFreePlaces}}" hidden>
+        </div>
+        <div>
+            <label for="new-spots-input">Nouvelle répartition:</label>
+            <input type="number" name="spots" id="new-spots-input">
+        </div>
+
+        <div id="submit-zone">
+            <button id="close-spots-edit-dialog" type="button">Annuler</button>
+            <button type="submit">Confirmer</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="edit-spots-success">
+    <form action="{{url_for('superAdminPannelAllocation')}}" method="get">
+        <h3>Modifications effectuées avec succès</h3>
+
+        <button type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog expand" id="edit-spots-failed">
+    <form method="dialog">
+        <label>Echec de la modification de la répartition, vérifiez que les champs sont corrects puis réessayez</label>
+
+        <button type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="addEntity">
+    <form action="{{url_for('superAdminAddEntity')}}" method="post">
+        <h3>Ajouter une structure</h3>
+
+        <div>
+            <label for="entity-name">Nom de la structure</label>
+            <input type="text" name="name" id="name" required>
+        </div>
+
+        <div>
+            <label for="entity-spots">Nombre de places disponible : {{nbFreePlaces}}</label>
+            <input type="number" name="nbFreePlaces" id="nbFreePlaces" value="{{nbFreePlaces}}" hidden>
+        </div>
+
+        <div>
+            <label for="entity-spots">Nombre de places allouées</label>
+            <input type="number" name="nbPlacesAllocated" id="nbPlacesAllocated" required>
+        </div>
+
+        <div id="submit-zone">
+            <button id="close-add-entity-dialog" type="button">Annuler</button>
+            <button type="submit">Confirmer</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="addEntitySuccess">
+    <form action="{{url_for('superAdminPannelAllocation')}}" method="get">
+        <h3>Structure ajoutée avec succès</h3>
+
+        <button type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog expand" id="addEntityFailed">
+    <form method="dialog">
+        <label>Echec de l'ajout de la structure, vérifiez que les champs sont corrects puis réessayez</label>
+
+        <button type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="deleteEntity">
+    <form action="{{url_for('superAdminDeleteEntity')}}" method="post">
+        <h3>Supprimer une structure</h3>
+        <input type="hidden" name="id" id="entity-id">
+        <div>
+            <label for="entity-name">Nom de la structure:</label>
+            <input type="text" name="name" id="name" readonly>
+        </div>
+        <div id="submit-zone">
+            <button id="close-delete-entity-dialog" type="button">Annuler</button>
+            <button type="submit">Confirmer</button>
+        </div>
+    </form>
+</dialog>
+
+
+{% endblock %}
+
+{% block additionnalScript %}
+<script src="{{url_for('static', filename='js/super-admin-allocation.js')}}"></script>
+{% endblock %}

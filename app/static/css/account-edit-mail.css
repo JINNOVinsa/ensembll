@@ -1,0 +1,48 @@
+#edit-mail-dialog form {
+    max-width: 400px;
+    gap: 30px;
+}
+
+#edit-mail-dialog input {
+    outline: none;
+    border: none;
+    border-bottom: 1px solid var(--main-blue);
+}
+
+#edit-mail-dialog .submit-container {
+    width: fit-content;
+    align-self: flex-end;
+    display: flex;
+    gap: 20px;
+}
+
+#edit-mail-dialog .submit-container button[type="button"] {
+    color: var(--main-blue);
+}
+
+#edit-mail-dialog .submit-container button[type="submit"] {
+    color: red;
+}
+
+#edit-mail-dialog .submit-container button {
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 10px;
+    font-weight: 700;
+}
+
+#edit-mail-dialog .submit-container button:hover {
+    background-color: var(--hover-grey);
+}
+
+.user-dialog.result button {
+    align-self: flex-end;
+    color: var(--main-blue);
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.user-dialog.result button:hover {
+    background-color: var(--hover-grey);
+}

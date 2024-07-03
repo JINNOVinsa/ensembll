@@ -1,0 +1,30 @@
+.invalid {
+    border-bottom: 3px solid red;
+}
+
+#pswd-warn {
+    color: red;
+    align-self: flex-end;
+}
+
+.user-dialog form {
+    min-height: auto;
+    border: none;
+    padding: 0px;
+
+    align-items: flex-start;
+    gap: 30px;
+}
+
+.user-dialog button {
+    color: var(--main-blue);
+    padding: 10px;
+    font-weight: 700;
+    align-self: flex-end;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.user-dialog button:hover {
+    background-color: var(--hover-grey);
+}

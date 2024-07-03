@@ -1,0 +1,406 @@
+{% extends 'super-admin-pannel.html' %}
+
+{% block additionnalHead %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/admin-pannel-bookings.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/admin-pannel-add-user-bookings.css')}}">
+{% endblock %}
+
+{% block tableTitle %}
+<label>{{bookingcount}} Stationnements en cours</label>
+<button class="add-btn" id="add-user-booking">Ajouter</button>
+{% endblock %}
+
+{% block tableHeader %}
+<label>Nom</label>
+<label>Prénom</label>
+<label>Immatriculation</label>
+<label>Horaire de début</label>
+<label>Horaire de fin</label>
+<label>Durée</label>
+<label>Date de fin</label>
+{% endblock %}
+
+{% block tableBody %}
+
+{% if bookingcount == 0 %}
+<label>Aucun stationnement en cours</label>
+{% endif %}
+
+{% endblock %}
+
+{% block underTable %}
+<dialog class="user-dialog expand" id="expand-booking-dialog">
+    <form method="dialog">
+        <h2>Stationnement effectué par <span id="user-name"></span></h2>
+
+        <div class="content">
+            <div class="cell span-two">
+                <label class="title">Nom</label>
+                <label id="lastname"></label>    
+            </div>
+            
+            <div class="cell span-two">
+                <label class="title">Prénom</label>
+                <label id="firstname"></label>
+            </div>
+
+            <div class="cell span-two">
+                <label class="title">Mail</label>
+                <label id="mail"></label>
+            </div>
+
+            <div class="cell span-two">
+                <label class="title">Tel</label>
+                <label id="tel"></label>
+            </div>
+
+            <div class="cell span-two">
+                <label class="title">Plaque</label>
+                <label id="plate"></label>
+            </div>
+
+            <div class="cell span-two">
+                <label class="title">Durée</label>
+                <label id="duration"></label>
+            </div>
+
+            <div class="cell span-three">
+                <label class="title">Début</label>
+                <label id="start"></label>
+            </div>
+
+            <div class="cell span-three">
+                <label class="title">Fin</label>
+                <label id="end"></label>
+            </div>
+
+
+            <div class="cell span-three">
+                <label class="title">Répétition:</label>
+                <label id="repeat-type"></label>
+            </div>
+
+            <div class="cell span-three optionnal" id="repeat-ending-headline">
+                <label class="title">Fin de répétition le:</label>
+                <label id="repeat-ending"></label>
+            </div>
+        </div>
+
+
+        <button class="close-user-dialog" type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="add-booking-popup" id="edit-booking-dialog">
+    <div class="headline">
+        <h1 class="add-booking-headline">Modifier un stationnement</h1>
+
+        <button class="close" id="close-edit-booking-dialog" value="cancel"><img
+                src="{{url_for('static', filename='assets/close.png')}}" alt="Close"></button>
+    </div>
+
+    <form class="book" id="edit-booking" action="{{url_for('superAddUserBooking')}}" method="dialog">
+
+        <div class="row" id="infos">
+            <div class="cell">
+                <label id="plate">Votre véhicule</label>
+                <select name="plate" id="plate-selector" required></select>
+            </div>
+
+            <div class="cell">
+                <label class="repeat">Périodicité</label>
+                <select name="interval" id="period-selector">
+                    <option value="unique">Pas de répétition</option>
+                    <option value="daily">Quotidienne</option>
+                    <option value="weekly">Hebdomadaire</option>
+                    <option value="monthly">Mensuelle</option>
+    
+                    <!--<option value="weekday">La semaine (Lundi au Vendredi)</option>-->
+                    <option value="custom">Personnalisé...</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row" id="datetimes">
+            <label id="start">Date et durée du stationnement (<span id="edit-duration"></span>)</label>
+
+                <label class="date pick-label" id="date-start-label">
+                    <input id="start-date-picker" name="booking-date-start" type="text" readonly required>
+                </label>
+
+                <label class="time pick-label">
+                    <input id="time-start-picker" name="booking-time-start" type="text" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" required>
+                </label>    
+
+
+                <label class="date pick-label" id="date-end-label">
+                    <input id="end-date-picker" name="booking-date-end" type="text" readonly required>
+                </label>
+    
+                <label class="time pick-label">
+                    <input id="time-end-picker" name="booking-time-end" type="text" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" required>
+                </label>
+
+        </div>
+
+        <div class="row" id="end-recurrence">
+            <label>Fin de la répétition le </label>
+
+            <label class="date pick-label" id="recurrence-date-end-label">
+                <input id="recurrence-end-date-picker" name="recurrence-booking-date-end" type="text" readonly required>
+            </label>
+        </div>
+
+        <div class="submit-zone">
+            <button class="submit-booking-form" id="delete-booking" type="button">Supprimer</button>
+            <button class="submit-booking-form" id="submit-booking" type="submit" value="submit">Modifier</button>    
+        </div>
+    </form>
+</dialog>
+
+<dialog class="add-booking-popup" id="edit-booking-custom-dialog">
+
+    <div class="headline">
+        <h3 class="add-booking-headline">Répétition personnalisé</h3>
+
+        <button class="close" id="close-edit-booking-custom-dialog" value="cancel">
+            <img src="{{url_for('static', filename='assets/close.png')}}" alt="Close">
+        </button>
+    </div>
+
+    <form class="book" id="edit-booking-custom" method="dialog">
+
+        <label>Se répète tous les </label>
+
+        <div id="custom-recurrence-wrapper">
+            <label class="date pick-label" id="custom-recurrence-amount-label">
+                <input id="custom-recurrence-picker" name="custom-recurrence-amount" type="number" value="1" min="1"
+                    required>
+            </label>
+
+            <select name="custom-interval" id="custom-recurrence-interval-selector">
+                <option value="day" selected="selected" autocomplete="off">jours</option>
+                <option value="week" autocomplete="off">semaines</option>
+                <option value="month" autocomplete="off">mois</option>
+            </select>
+        </div>
+
+        <div id="custom-recurrence-week" style="display:none;">
+            <label>Le: </label>
+
+            <div id="days-pins">
+                <input type="checkbox" name="monday" id="custom-monday" value="monday">
+                <label class="unselectable" for="custom-monday">L</label>
+                <input type="checkbox" name="tuesday" id="custom-tuesday" value="tuesday">
+                <label class="unselectable" for="custom-tuesday">M</label>
+                <input type="checkbox" name="wednesday" id="custom-wednesday" value="wednesday">
+                <label class="unselectable" for="custom-wednesday">M</label>
+                <input type="checkbox" name="thursday" id="custom-thursday" value="thursday">
+                <label class="unselectable" for="custom-thursday">J</label>
+                <input type="checkbox" name="friday" id="custom-friday" value="friday">
+                <label class="unselectable" for="custom-friday">V</label>
+                <input type="checkbox" name="saturday" id="custom-saturday" value="saturday">
+                <label class="unselectable" for="custom-saturday">S</label>
+                <input type="checkbox" name="sunday" id="custom-sunday" value="sunday">
+                <label class="unselectable" for="custom-sunday">D</label>
+            </div>
+        </div>
+
+
+
+        <button class="submit-booking-form" id="submit-booking-custom" type="submit" value="submit">Valider</button>
+    </form>
+</dialog>
+
+<dialog id="add-booking-failed">
+    <form method="dialog">
+        <h3>Aucune place disponible pour ce créneau horaire</h3>
+
+        <button type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="edit-booking-success">
+    <form action="{{url_for('superAdminPannelBookings')}}" method="get">
+        <h3>La modification du stationnement a bien été prise en compte</h3>
+
+        <button type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="edit-booking-failed">
+    <form action="{{url_for('superAdminPannelBookings')}}" method="get">
+        <h3>La modification du stationnement a échouée pour une raison inconnue. Veuillez réessayer</h3>
+
+        <button type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog id="add-booking-failed">
+    <form method="dialog">
+        <h3>Aucune place disponible pour ce créneau horaire</h3>
+
+        <button type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="ask-delete">
+    <form action="{{url_for('superDeleteUserBooking')}}" method="post">
+        <h3>Voulez-vous vraiment supprimer ce stationnement ?</h3>
+
+        <div class="submit-zone">
+            <button type="button">Annuler</button>
+            <button class="danger" type="submit">Valider</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="delete-booking-success">
+    <form action="{{url_for('superAdminPannelBookings')}}" method="get">
+        <h3>La suppression du stationnement a bien été prise en compte</h3>
+
+        <button type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="delete-booking-failed">
+    <form action="{{url_for('superAdminPannelBookings')}}" method="get">
+        <h3>La suppression du stationnement a échouée pour une raison inconnue. Veuillez réessayer</h3>
+
+        <button type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="add-booking-popup" id="add-user-booking-dialog">
+    <div class="headline">
+        <h1 class="add-booking-headline">Ajouter un stationnement</h1>
+
+        <button class="close" id="close-add-booking-dialog" value="cancel"><img
+                src="{{url_for('static', filename='assets/close.png')}}" alt="Close"></button>
+    </div>
+
+    <form class="book" id="add-booking" action="{{url_for('superAddUserBooking')}}" method="dialog">
+
+        <div class="row head" id="user-row">
+            <div class="cell">
+                <label id="user">Usager</label>
+                <select name="user" id="add-user-selector" required></select>
+            </div>
+        </div>
+        <div class="row head" id="infos">
+            <div class="cell">
+                <label id="plate">Plaque associée</label>
+                <select name="plate" id="add-plate-selector" required></select>
+            </div>
+
+            <div class="cell">
+                <label class="repeat">Périodicité</label>
+                <select name="interval" id="add-period-selector">
+                    <option value="unique">Pas de répétition</option>
+                    <option value="daily">Quotidienne</option>
+                    <option value="weekly">Hebdomadaire</option>
+                    <option value="monthly">Mensuelle</option>
+    
+                    <!--<option value="weekday">La semaine (Lundi au Vendredi)</option>-->
+                    <option value="custom">Personnalisé...</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row" id="datetimes">
+            <label id="start">Date et durée du stationnement (<span id="add-booking-duration"></span>)</label>
+
+                <label class="date pick-label" id="add-date-start-label">
+                    <input id="add-start-date-picker" name="booking-date-start" type="text" readonly required>
+                </label>
+                
+
+                <label class="time pick-label">
+                    <input id="add-time-start-picker" name="booking-time-start" type="text" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" required>
+                </label>    
+
+
+                <label class="date pick-label" id="add-date-end-label">
+                    <input id="add-end-date-picker" name="booking-date-end" type="text" readonly required>
+                </label>
+    
+                <label class="time pick-label">
+                    <input id="add-time-end-picker" name="booking-time-end" type="text" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" required>
+                </label>
+
+                <span class="warn" id="add-weekly-booking-restrict">Vous ne pouvez pas changer la date lors d'une répétition personnalisée hebdomadaire</span>
+        </div>
+
+        <div class="row" id="add-end-recurrence">
+            <label>Fin de la répétition le </label>
+
+            <label class="date pick-label" id="add-recurrence-date-end-label">
+                <input id="add-recurrence-end-date-picker" name="recurrence-booking-date-end" type="text" readonly required>
+            </label>
+        </div>
+
+        <button class="submit-booking-form" id="add-submit-booking" type="submit" value="submit">Ajouter</button>
+    </form>
+
+</dialog>
+
+<dialog class="add-booking-popup" id="add-user-booking-custom-dialog">
+
+    <div class="headline">
+        <h3 class="add-booking-headline">Répétition personnalisé</h3>
+
+        <button class="close" id="close-add-booking-custom-dialog" value="cancel">
+            <img src="{{url_for('static', filename='assets/close.png')}}" alt="Close">
+        </button>
+    </div>
+
+    <form class="book" id="add-user-booking-custom" method="dialog">
+
+        <label>Se répète tous les </label>
+
+        <div id="custom-recurrence-wrapper">
+            <label class="date pick-label" id="custom-recurrence-amount-label">
+                <input id="custom-recurrence-picker" name="custom-recurrence-amount" type="number" value="1" min="1"
+                    required>
+            </label>
+
+            <select name="custom-interval" id="add-custom-recurrence-interval-selector">
+                <option value="day" selected="selected" autocomplete="off">jours</option>
+                <option value="week" autocomplete="off">semaines</option>
+                <option value="month" autocomplete="off">mois</option>
+            </select>
+        </div>
+
+        <div id="add-custom-recurrence-week" style="display:none;">
+            <label>Le: </label>
+
+            <div id="days-pins">
+                <input type="checkbox" name="monday" id="add-custom-monday" value="monday">
+                <label class="unselectable" for="add-custom-monday">L</label>
+                <input type="checkbox" name="tuesday" id="add-custom-tuesday" value="tuesday">
+                <label class="unselectable" for="add-custom-tuesday">M</label>
+                <input type="checkbox" name="wednesday" id="add-custom-wednesday" value="wednesday">
+                <label class="unselectable" for="add-custom-wednesday">M</label>
+                <input type="checkbox" name="thursday" id="add-custom-thursday" value="thursday">
+                <label class="unselectable" for="add-custom-thursday">J</label>
+                <input type="checkbox" name="friday" id="add-custom-friday" value="friday">
+                <label class="unselectable" for="add-custom-friday">V</label>
+                <input type="checkbox" name="saturday" id="add-custom-saturday" value="saturday">
+                <label class="unselectable" for="add-custom-saturday">S</label>
+                <input type="checkbox" name="sunday" id="add-custom-sunday" value="sunday">
+                <label class="unselectable" for="add-custom-sunday">D</label>
+            </div>
+        </div>
+
+
+
+        <button class="submit-booking-form" id="submit-booking-custom" type="submit" value="submit">Valider</button>
+    </form>
+</dialog>
+{% endblock %}
+
+{% block additionnalScript %}
+<script src="{{url_for('static', filename='js/super-admin-bookings.js')}}"></script>
+<script src="{{url_for('static', filename='js/super-admin-add-user-booking.js')}}"></script>
+<script src="{{url_for('static', filename='js/admin-pannel-search-bookings.js')}}"></script>
+{% endblock %}

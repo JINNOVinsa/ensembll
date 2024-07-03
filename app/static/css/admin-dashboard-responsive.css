@@ -1,0 +1,75 @@
+@media screen and (max-width: 750px) {
+    dialog {
+        padding: 15px;
+        border-radius: 5px;
+
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
+@media screen and (max-width: 700px) {
+    #in-header-critical-open {
+        display: none;
+    }
+
+    #under-header-critical-open {
+        display: block;
+        position: absolute;
+        top: 60px;
+        right: 5%;
+        padding: 10px;
+
+        background-color: transparent;
+        color: var(--invalid-red);
+        font-weight: 900;
+        cursor: pointer;
+    }
+
+    #problem-btn {
+        display: none;
+    }
+
+    #under-problem-btn {
+        display: block;
+        position: absolute;
+        top: 60px;
+        left: 5%;
+        padding: 10px;
+
+        background-color: transparent;
+        color: var(--problem-color);
+        font-weight: 900;
+        cursor: pointer;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    main>#headline {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    main>#headline>h3 a {
+        padding: 0;
+    }
+
+    main>#headline>h3 a:hover {
+        background-color: transparent;
+    }
+
+    .delete-plate-popup #delete-plate {
+        grid-template-columns: 1fr 1fr;
+        column-gap: 10px;
+    }
+
+    .delete-plate-popup form #close-delete-dialog {
+        grid-column: auto;
+    }
+
+    .delete-plate-popup #delete-plate .submit-dialog-btn {
+        grid-column: auto;
+    }
+}

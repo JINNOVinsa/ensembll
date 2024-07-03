@@ -1,0 +1,37 @@
+{% extends 'index.html' %}
+
+{% block head %}
+
+<link rel="stylesheet" href="{{url_for('static', filename='css/auth.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/auth-mobile.css')}}">
+<title>Park7 - Accueil</title>
+
+{% endblock %}
+
+{% block main %}
+
+<form method="POST" action="{{url_for('login')}}" style="min-height:500px;">
+
+    <label class="title">Connexion</label>
+
+    <input class="form-input" id="name" type="text" placeholder="Identifiant" name="login" {% if error
+        %}style="border-color: red;" {% else %}{% endif %} required>
+
+    <div class="pswd-wrapper">
+        <input class="form-input" id="pswd" type="password" placeholder="Mot de passe" name="pswd" {% if error
+            %}style="border-color: red;" {% else %}{% endif %} required>
+        <a class="reset-pswd" href="{{url_for('reset_pswd')}}">Mot de passe oublié</a>
+        <label class="warn-login">{% if error %}Identifiant ou mot de passe incorrect{% else %}{%endif%}</label>
+    </div>
+
+
+    <div class="form-footer">
+        <a class="auth-navigate" href="{{url_for('create_account')}}">Créer un compte</a>
+        <button class="form-submit">Connexion</button>
+    </div>
+</form>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

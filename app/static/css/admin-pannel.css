@@ -1,0 +1,240 @@
+#category {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 40px;
+}
+
+#category h2 {
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+#category a {
+    text-decoration: none;
+    color: var(--main-blue);
+}
+
+#category-super {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    column-gap: 40px;
+}
+
+#category-super h2 {
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+#category-super a {
+    text-decoration: none;
+    color: var(--main-blue);
+}
+
+#search {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    position: relative;
+    left: 50%;
+    padding: 10px 20px 10px 20px;
+    transform: translateX(-50%);
+    border: 1px solid black;
+    border-radius: 50px;
+    width: 40%;
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+#search-icon {
+    height: 100%;
+}
+
+#search-bar {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+
+    font-size: 1rem;
+}
+
+.table {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    border: var(--main-blue) 1px solid;
+    border-radius: 5px;
+    margin-bottom: 200px;
+    padding: 20px;
+}
+
+.table>.title {
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.table .title button {
+    color: var(--main-blue);
+    background: white;
+    border: none;
+    border-radius: 5px;
+
+    cursor: pointer;
+
+    padding: 10px 15px 10px 15px;
+
+    font-size: 0.8em;
+    font-weight: 700;
+}
+
+.table .title .add-btn {
+    position: absolute;
+    right: 20px;
+    top: 12px;
+}
+
+.table .title button:hover {
+    background-color: var(--hover-grey);
+}
+
+.table .header {
+    margin: 45px 5% 35px 5%;
+    /*border: purple 1px solid;*/
+
+    display: grid;
+    grid-template-columns: 0.5fr 0.5fr 75px 1fr 100px 100px 100px 100px;
+    column-gap: 20px;
+}
+
+.table .body {
+    /*border: red 1px solid;*/
+    border-radius: 5px;
+    margin: 15px 5% 15px 5%;
+
+}
+
+.table .entry {
+    width: 100%;
+    padding: 0;
+
+    margin-top: 15px;
+    margin-bottom: 15px;
+    display: grid;
+    grid-template-columns: 0.5fr 0.5fr 75px 1fr 100px 100px 100px 100px;
+    column-gap: 20px;
+    align-items: center;
+}
+
+.entry button {
+    all: unset;
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    text-align: center;
+    color: white;
+    border-radius: 5px;
+
+    cursor: pointer;
+}
+
+.entry .expand-btn {
+    background-color: var(--main-blue);
+}
+
+.entry .expand-btn:hover {
+    background-color: var(--main-blue-dark);
+}
+
+.entry .edit-btn {
+    background-color: var(--invalid-red);
+}
+
+.entry .edit-btn:hover {
+    background-color: var(--invalid-red-dark);
+}
+
+.user-dialog {
+    max-width: 800px;
+}
+
+.user-dialog.expand {
+    width: 700px;
+}
+
+.user-dialog form {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.user-dialog span {
+    font-style: italic;
+}
+
+.user-dialog .content {
+    display: grid;
+    grid-template-columns: 0.9fr 1fr;
+    row-gap: 40px;
+    column-gap: 40px;
+}
+
+.user-dialog .content .title {
+    font-weight: 700;
+    color: var(--main-blue);
+    text-align: end;
+}
+
+.user-dialog #immat {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    row-gap: 10px;
+}
+
+.user-dialog .close-user-dialog {
+    width: fit-content;
+    text-align: center;
+    padding: 15px 20px 15px 20px;
+    color: var(--main-blue);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    align-self: flex-end;
+    font-weight: 700;
+}
+
+.user-dialog .close-user-dialog.danger {
+    color: white;
+    background-color: var(--invalid-red);
+}
+
+.user-dialog .close-user-dialog.danger:not(:disabled):hover {
+    background-color: var(--invalid-red-dark);
+}
+
+.user-dialog .close-user-dialog.danger:disabled {
+    background-color: var(--disabled-color) !important;
+}
+
+.user-dialog .close-user-dialog:hover {
+    background-color: var(--hover-grey);
+}
+
+.critical-open-btn {
+    background-color: var(--invalid-red);
+    color: white;
+    padding: 10px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.critical-open-btn:hover {
+    background-color: var(--invalid-red-dark);
+}
+
+#under-header-critical-open {
+    display: none;
+}

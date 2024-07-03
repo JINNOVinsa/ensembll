@@ -1,0 +1,595 @@
+main {
+    margin-bottom: 200px;
+}
+
+.bookings-table {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    border: var(--main-blue) 1px solid;
+    border-radius: 5px;
+
+    margin-top: 50px;
+    margin-bottom: 150px;
+    padding: 20px;
+}
+
+.bookings-table .title {
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.bookings-table .title>div {
+    position: absolute;
+    right: 20px;
+    top: 12px;
+}
+
+.bookings-table .title button {
+    color: var(--main-blue);
+    background: white;
+    border: none;
+    border-radius: 5px;
+
+    cursor: pointer;
+
+    padding: 10px 15px 10px 15px;
+
+    font-size: 0.8em;
+    font-weight: 700;
+}
+
+.bookings-table .title button:hover {
+    background-color: var(--hover-grey);
+}
+
+.warn {
+    visibility: hidden;
+    width: 260px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 8px 10px;
+
+    opacity: 0;
+    transition: opacity 0.5s;
+    
+    font-size: 0.7em;
+}
+
+.bookings-table .title .warn {
+    position: absolute;
+    z-index: 3;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.bookings-table .title .show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.bookings-table .header {
+    margin: 45px 15px 35px 15px;
+    text-align: center;
+    /*border: purple 1px solid;*/
+
+    display: grid;
+    grid-template-columns: repeat(5, 1fr) 50px 50px;
+}
+
+.bookings-table .body {
+    margin-top: 15px;
+    /*border: red 1px solid;*/
+    border-radius: 5px;
+}
+
+.bookings-table .entry {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin: 15px 15px 15px 15px;
+
+    /*border: green 1px solid;*/
+    border-radius: 5px;
+
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    grid-template-columns: repeat(5, 1fr) 50px 50px;
+}
+
+.bookings-table .entry .booking-action {
+    width: 30px;
+    height: 30px;
+
+    border: #606060 1px solid;
+    border-radius: 50%;
+
+    padding: 1px;
+
+    cursor: pointer;
+}
+
+.add-booking-popup {
+    width: 800px;
+    max-width: 800px;
+}
+
+.add-booking-popup .headline {
+    display: grid;
+    grid-template-columns: 1fr 40px;
+    margin-bottom: 50px;
+
+    align-items: center;
+}
+
+.add-booking-popup .headline .close {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.add-booking-popup .headline .close>img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+}
+
+.add-booking-popup #add-booking {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    row-gap: 40px;
+}
+
+.add-booking-popup #add-booking .row {
+    display: flex;
+    flex-direction: column;
+    grid-column: 1 / -1;
+
+    position: relative;
+}
+
+.add-booking-popup #add-booking .row .cell>label,
+.add-booking-popup #add-booking .row>label {
+    font-weight: 700;
+}
+
+.add-booking-popup #add-booking select {
+    height: 30px;
+
+    background-color: transparent;
+    outline: none;
+    border: none;
+    border-bottom: 3px var(--main-blue) solid;
+
+    font-size: 1em;
+}
+
+.add-booking-popup #add-booking .row#infos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    row-gap: 40px;
+    column-gap: 50px;
+}
+
+.add-booking-popup #add-booking .row#infos .cell {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.add-booking-popup #add-booking .row#datetimes {
+    display: grid;
+    grid-template-columns: 240px 140px;
+    grid-auto-flow: row;
+    align-items: center;
+    gap: 12px;
+}
+
+.add-booking-popup #add-booking .row#datetimes #start {
+    grid-column: 1 / 3;
+}
+
+.add-booking-popup .book .pick-label {
+    width: fit-content;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.date {
+    width: fit-content;
+    /*max-width: 250px;*/
+}
+
+.add-booking-popup .book .pick-label input,
+.add-booking-popup .book input {
+    max-width: 100%;
+    border: none;
+    background-color: transparent;
+    outline: none;
+
+    font-size: 1em;
+}
+
+.add-booking-popup .book .pick-label:hover {
+    background-color: #e7e7e7;
+}
+
+.add-booking-popup form button {
+    align-self: flex-end;
+    width: 8rem;
+    color: white;
+    font-size: 1.2em;
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--main-blue);
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.add-booking-popup .book button:hover {
+    background-color: var(--main-blue-dark);
+    cursor: pointer;
+}
+
+.add-booking-popup .book button:disabled {
+    background-color: var(--disabled-color);
+    cursor: auto;
+}
+
+.add-booking-popup .row#end-recurrence {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+}
+
+.add-booking-popup .row#end-recurrence label {
+    width: fit-content;
+}
+
+.add-booking-popup #weekly-booking-restrict {
+    position: absolute;
+    font-size: 0.9em;
+    top: 100%;
+    z-index: 100;
+}
+
+.add-booking-popup#add-booking-custom-dialog {
+    width: 400px;
+}
+
+.add-booking-popup#add-booking-custom-dialog .headline {
+    margin-bottom: 25px;
+}
+
+.add-booking-popup#add-booking-custom-dialog .headline .close>img {
+    width: 30px;
+    height: 30px;
+}
+
+.add-booking-popup#add-booking-custom-dialog form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.add-booking-popup#add-booking-custom-dialog form>label,
+.add-booking-popup#add-booking-custom-dialog form>div>label {
+    font-weight: 700;
+}
+
+.add-booking-popup#add-booking-custom-dialog #custom-recurrence-week {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+.add-booking-popup#add-booking-custom-dialog #custom-recurrence-week #day-pins {
+    height: fit-content;
+}
+
+.add-booking-popup#add-booking-custom-dialog #custom-recurrence-week input[type="checkbox"]:not(:checked),
+.add-booking-popup#add-booking-custom-dialog #custom-recurrence-week input[type="checkbox"]:checked {
+    position: absolute;
+    left: -99999%;
+}
+
+.add-booking-popup#add-booking-custom-dialog #custom-recurrence-week input[type="checkbox"] + label {
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 50%;
+    padding: 5px 10px;
+    background-color: rgb(214, 214, 214);
+    text-align: center;
+    vertical-align: middle;
+}
+
+.add-booking-popup#add-booking-custom-dialog #custom-recurrence-week input[type="checkbox"]:not(:checked) + label {
+    background-color: rgb(214, 214, 214);
+    color: black;
+}
+
+.add-booking-popup#add-booking-custom-dialog #custom-recurrence-week input[type="checkbox"]:checked + label {
+    background-color: var(--main-blue);
+    color: white;
+}
+
+.add-booking-popup#add-booking-custom-dialog form>button {
+    align-self: flex-end;
+    padding: 10px 15px 10px 15px;
+}
+
+.add-booking-popup#add-booking-custom-dialog #custom-recurrence-wrapper {
+    display: flex;
+    gap: 15px;
+}
+
+.add-booking-popup#add-booking-custom-dialog #custom-recurrence-wrapper label {
+    background-color: #e7e7e7;
+}
+
+.add-booking-popup#add-booking-custom-dialog #custom-recurrence-wrapper label:hover {
+    background-color: rgb(214, 214, 214);;
+}
+
+.add-booking-popup#add-booking-custom-dialog #custom-recurrence-wrapper input {
+    width: 50px;
+}
+
+.add-booking-popup#add-booking-custom-dialog #custom-recurrence-wrapper select {
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.add-booking-popup#add-booking-custom-dialog #custom-recurrence-wrapper select:hover {
+    background-color: rgb(214, 214, 214);
+}
+/*.add-booking-popup#add-booking-custom-dialog #custom-end-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.add-booking-popup#add-booking-custom-dialog #custom-date-end-label {
+    margin-left: 10px;
+}
+
+.add-booking-popup#add-booking-custom-dialog #custom-end-date:checked:not(:checked) {
+    color: var(--main-blue);
+    background-color: var(--main-blue);
+} */
+
+#add-booking-failed form {
+    max-width: 500px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#add-booking-failed button {
+    align-self: flex-end;
+    color: var(--main-blue);
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+#add-booking-failed button:hover {
+    background-color: var(--hover-grey);
+}
+
+.delete-booking-popup {
+    width: 500px;
+    max-width: 800px;
+}
+
+.delete-booking-popup #delete-booking {
+    display: grid;
+
+    grid-template-columns: 1fr 125px 125px;
+    row-gap: 25px;
+    column-gap: 50px;
+}
+
+.delete-booking-popup #delete-booking h2 {
+    grid-column: 1 / -1;
+}
+
+.delete-booking-popup #delete-booking label {
+    grid-column: 1 / -1;
+}
+
+.delete-booking-popup #delete-booking span {
+    font-weight: 700;
+}
+
+.delete-booking-popup #delete-booking button {
+    font-size: 1.1em;
+
+    padding: 10px;
+
+    border: none;
+    border-radius: 5px;
+
+    cursor: pointer;
+    font-weight: 500;
+
+    text-align: center;
+}
+
+.delete-booking-popup #delete-booking #close-delete-dialog {
+    grid-row: 3;
+    grid-column: 2;
+
+    color: var(--main-blue);
+    background-color: white;
+}
+
+.delete-booking-popup #delete-booking #close-delete-dialog:hover {
+    background-color: var(--hover-grey);
+}
+
+.delete-booking-popup #delete-booking #submit-delete-dialog {
+    grid-row: 3;
+    grid-column: 3;
+    background-color: red;
+    color: white;
+}
+
+.delete-booking-popup #delete-booking #submit-delete-dialog:hover {
+    background-color: rgb(220, 0, 0);
+}
+
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#rgpdDialog {
+    max-width: 600px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+}
+
+#rgpdDialog h2 {
+    color: #333;
+    margin-bottom: 16px;
+}
+
+#rgpdDialog p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #666;
+    margin-bottom: 12px;
+}
+
+#rgpdDialog a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+#rgpdDialog a:hover {
+    text-decoration: underline;
+}
+
+#rgpdDialog div {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#rgpdDialog label {
+    margin-left: 8px;
+    font-size: 14px;
+    color: #333;
+}
+
+#acceptRGPD {
+    accent-color: #007bff;
+}
+
+#rgpdDialog menu {
+    text-align: right;
+}
+
+#acceptButton {
+    padding: 10px 25px;
+    background-color: var(--valid-green);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#acceptButton:hover {
+    background-color: var(--valid-green-dark);
+}
+
+#under-problem-btn {
+    display: none;
+}
+
+.problem-btn {
+    background-color: var(--problem-color);
+    color: white;
+    padding: 10px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.problem-btn:hover {
+    background-color: var(--problem-color-dark);
+}
+
+.user-dialog {
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#report-problem-dialog form {
+    gap: 10px !important;
+}
+
+.user-dialog form label {
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #333;
+}
+
+.user-dialog form input, .user-dialog form select, .user-dialog form textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 2px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.user-dialog form button {
+    padding: 8px 15px;
+    margin-right: 10px;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.cancel {
+    background-color: var(--invalid-red);
+}
+
+.cancel:hover {
+    background-color: var(--invalid-red-dark);
+}
+
+.valid {
+    background-color: var(--valid-green);
+}
+
+.valid:hover {
+    background-color: var(--valid-green-dark);
+}

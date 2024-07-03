@@ -1,0 +1,284 @@
+.body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.table .header {
+    grid-template-columns: 1fr 1fr 0.4fr 0.3fr 0.3fr !important;
+}
+
+.entry {
+    grid-template-columns: 1fr 1fr 0.4fr 0.3fr 0.3fr !important;
+}
+
+.time-slots {
+    background-color: var(--main-blue) !important;
+}
+
+.time-slots:hover {
+    background-color: var(--main-blue-dark) !important;
+}
+
+.edit-profile {
+    background-color: var(--pending-orange) !important;
+}
+
+.edit-profile:hover {
+    background-color: var(--pending-orange-dark) !important;
+}
+
+.delete-profile {
+    background-color: var(--invalid-red) !important;
+}
+
+.delete-profile:hover {
+    background-color: var(--invalid-red-dark) !important;
+}
+
+#add-profile-form input {
+    border: none;
+    border-bottom: 1px solid var(--main-blue);
+    outline: none;
+}
+
+#add-profile-form button {
+    width: auto;
+}
+
+#time-slots-form .content {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#time-slots-form .content .entry {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr 1fr !important;
+    gap: 20px;
+    place-items: center;
+}
+
+#time-slots-form .submit-zone {
+    align-self: flex-end;
+    width: fit-content;
+    display: flex;
+    gap: 40px;
+}
+
+#time-slots-form button {
+    width: fit-content;
+    padding: 10px;
+    border-radius: 5px;
+    color: var(--main-blue);
+    font-weight: 700;
+}
+
+#time-slots-form button:hover {
+    background-color: var(--hover-grey);
+}
+
+#time-slots-form button.danger {
+    color: red;
+}
+
+#confirm-delete-time-slot-dialog .submit-zone {
+    width: fit-content;
+    display: flex;
+    gap: 40px;
+    align-self: flex-end;
+}
+
+#confirm-delete-time-slot-dialog button {
+    width: fit-content;
+    padding: 10px;
+    border-radius: 5px;
+    color: var(--main-blue);
+    font-weight: 700;
+}
+
+#confirm-delete-time-slot-dialog button:hover {
+    background-color: var(--hover-grey);
+}
+
+#confirm-delete-time-slot-dialog button[type="submit"] {
+    color: red;
+}
+
+#confirm-delete-time-slot-failed button {
+    width: fit-content;
+    padding: 10px;
+    border-radius: 5px;
+    color: var(--main-blue);
+    font-weight: 700;
+    align-self: flex-end;
+}
+
+#confirm-delete-time-slot-failed button:hover {
+    background-color: var(--hover-grey);
+}
+
+#add-time-slot-dialog #time-slots-input {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#add-time-slot-dialog #time-slots-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 20px;
+}
+
+#add-time-slot-dialog input {
+    width: 100%;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid var(--main-blue);
+}
+
+#add-time-slot-dialog button {
+    width: fit-content;
+    color: var(--main-blue);
+    font-weight: 700;
+    align-self: flex-end;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#add-time-slot-dialog button:hover {
+    background-color: var(--hover-grey);
+}
+
+#add-time-slot-failed button {
+    width: fit-content;
+    color: var(--main-blue);
+    font-weight: 700;
+    align-self: flex-end;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#add-time-slot-failed button:hover {
+    background-color: var(--hover-grey);
+}
+
+#edit-profile-form .content {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+    row-gap: 30px;
+}
+
+#edit-profile-form #profile-headline {
+    font-style: italic;
+}
+
+#edit-profile-form input {
+    outline: none;
+    border: none;
+    border-bottom: 1px solid var(--main-blue);
+}
+
+#edit-profile-form #input-criticity {
+    width: 2rem;
+}
+
+#edit-profile-form .submit-zone {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+#edit-profile-form .submit-zone button {
+    width: auto;
+}
+
+.dialog-profile-result form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.dialog-profile-result form button {
+    width: auto;
+    align-self: flex-end;
+}
+
+.dialog-profile-result#edit-profile-failed-dialog form h3 {
+    color: var(--invalid-red);
+}
+
+dialog button {
+    text-align: center;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#delete-profile-dialog {
+    width: fit-content;
+}
+
+#delete-profile-dialog button {
+   width: auto;
+}
+
+#confirm-edit-profile-form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 30px;
+}
+
+#confirm-edit-profile-form button {
+    width: auto;
+    text-align: center;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+dialog .submit-zone {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+#delete-profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;   
+}
+
+.entity {
+    margin: 5% 0;
+}
+
+.entity .entity-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--invalid-red);
+}
+
+
+.selector-label {
+    color: #303030;
+    font-size: 1.1rem;
+    font-weight: 400;
+
+    box-sizing: border-box;
+}
+
+
+select {
+    background: none;
+    font-size: 1rem;
+
+    border: none;
+    border-bottom: 1px var(--main-blue) solid;
+}

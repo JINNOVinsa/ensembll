@@ -1,0 +1,250 @@
+{% extends 'index.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/account.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/account-responsive.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/account-edit-mail.css')}}">
+
+{% if isAdmin %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/admin-dashboard-responsive.css')}}">
+{% endif %}
+
+<title>Park7 - Profil</title>
+{% endblock %}
+
+{% block header %}
+{% if isAdmin %}
+<button class="critical-open-btn" id="in-header-critical-open" type="button">Ouverture d'urgence</button>
+
+<a id="notifications" href="{{url_for('admin_notifications')}}">
+    <svg viewBox="0 0 611.999 611.999">
+        <path d="M570.107,500.254c-65.037-29.371-67.511-155.441-67.559-158.622v-84.578c0-81.402-49.742-151.399-120.427-181.203
+                    C381.969,34,347.883,0,306.001,0c-41.883,0-75.968,34.002-76.121,75.849c-70.682,29.804-120.425,99.801-120.425,181.203v84.578
+                    c-0.046,3.181-2.522,129.251-67.561,158.622c-7.409,3.347-11.481,11.412-9.768,19.36c1.711,7.949,8.74,13.626,16.871,13.626
+                    h164.88c3.38,18.594,12.172,35.892,25.619,49.903c17.86,18.608,41.479,28.856,66.502,28.856
+                    c25.025,0,48.644-10.248,66.502-28.856c13.449-14.012,22.241-31.311,25.619-49.903h164.88c8.131,0,15.159-5.676,16.872-13.626
+                    C581.586,511.664,577.516,503.6,570.107,500.254z M484.434,439.859c6.837,20.728,16.518,41.544,30.246,58.866H97.32
+                    c13.726-17.32,23.407-38.135,30.244-58.866H484.434z M306.001,34.515c18.945,0,34.963,12.73,39.975,30.082
+                    c-12.912-2.678-26.282-4.09-39.975-4.09s-27.063,1.411-39.975,4.09C271.039,47.246,287.057,34.515,306.001,34.515z
+                        M143.97,341.736v-84.685c0-89.343,72.686-162.029,162.031-162.029s162.031,72.686,162.031,162.029v84.826
+                    c0.023,2.596,0.427,29.879,7.303,63.465H136.663C143.543,371.724,143.949,344.393,143.97,341.736z M306.001,577.485
+                    c-26.341,0-49.33-18.992-56.709-44.246h113.416C355.329,558.493,332.344,577.485,306.001,577.485z" />
+        <path d="M306.001,119.235c-74.25,0-134.657,60.405-134.657,134.654c0,9.531,7.727,17.258,17.258,17.258
+                    c9.531,0,17.258-7.727,17.258-17.258c0-55.217,44.923-100.139,100.142-100.139c9.531,0,17.258-7.727,17.258-17.258
+                    C323.259,126.96,315.532,119.235,306.001,119.235z" />
+    </svg>
+</a>
+{% endif %}
+{% endblock %}
+
+{% block main %}
+{% if isAdmin %}
+<button class="critical-open-btn" id="under-header-critical-open" type="button">Ouverture d'urgence</button>
+{% endif %}
+
+<div class="headline">
+    <h1>Mon compte</h1>
+
+    <a id="home" href="{{url_for('home')}}">
+        <svg stroke="black" fill="none" viewBox="5 5 90 90">
+            <path stroke-width="5" stroke-linejoin="round" stroke-linecap="round"
+                d="m 30 77.5 v -40 l 20 -15 l 20 15 v 40 m -20 0 v -20">
+            </path>
+        </svg>
+    </a>
+</div>
+
+<div class="container">
+    <div class="general">
+        <div class="row" id="personnal-info">
+            <div class="cell">
+                <label id="lastname-title">Nom</label>
+                <p id="lastname-content">{{lastname}}</p>
+            </div>
+
+            <div class="cell">
+                <label id="firstname-title">Prénom</label>
+                <p id="firstname-content">{{firstname}}</p>
+            </div>
+
+            <div class="cell" id="mail-cell">
+                <label id="mail-title">Adresse mail <a class="mail-action edit" id="edit-mail"><svg stroke="green" fill="none" viewBox="-2 -9 120 120"><path stroke-width="5" stroke-linejoin="round"d="m 80 10 l -50 60 l -10 20 l 20 -10 l 50 -60 a 1 1 0 0 0 -10 -10"></path></svg></a></label>
+                <p id="mail-content">{{mail}}</p>
+            </div>
+
+            <div class="cell">
+                <label id="phone-label">Téléphone</label>
+                {% if hasPhone %}
+                <p>{{phone}}</p>
+                {% else %}
+                <p>Non renseigné</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row" id="profile-type">
+            <div class="cell">
+                <label id="profile-type-title">Type de profil</label>
+                <p id="profile-type-content">{{profileType}}</p>
+            </div>
+
+
+
+            <div class="validwrapper">
+                <img src="{{url_for('static', filename=profileStateIconPath)}}" alt="{{profileStateIconAlt}}" id="profile-type-state-icon">
+
+                <p class="profile-type-state-label {{state}}">
+                    {{profileTypeLabel}}
+                </p>
+            </div>
+        </div>
+
+        <div class="row" id="plates">
+            <label id="plates-title">Plaques d'immatriculation</label>
+
+            {% if plates |length > 0 %}
+            {% for p in plates %}
+            <p class="plate">
+                {{p}}
+                <button class="delete-plate">
+                    <svg stroke="red" stroke-width="15" stroke-linecap="round" fill="none" viewBox="0 0 100 100">
+                        <line id="down" x1="10" y1="10" x2="90" y2="90"></line>
+                        <line id="up" x1="10" y1="90" x2="90" y2="10"></line>
+                    </svg>
+                </button>
+            </p>
+            {% endfor %}
+
+            {% else %}
+            <p id="noplate">Aucune plaque enregistrée</p>
+            {% endif %}
+
+
+            <form class="new-plate" id="new-plate-form" action="{{url_for('add_plate')}}" method="post">
+                <button class="add-plate contracted" id="plate-trigger">
+                    <svg stroke="green" fill="none" viewBox="0 0 100 100">
+                        <path class="line vertical" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"
+                            d="M 50 25 v 50 v -25 h -25 l 40 -20"></path>
+
+                        <path class="line horizontal" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"
+                            d="M 75 50 h -50 l 40 20"></path>
+                    </svg>
+                </button>
+
+                <input type="text" class="add-plate contracted" id="plate-input" name="plate"
+                    placeholder="Nouvelle plaque">
+
+                <button class="add-plate contracted" id="plate-submit" type="submit">
+                    <svg stroke="green" fill="none" viewBox="0 4 100 100">
+                        <path class="line" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"
+                            d="M 30 50 l 20 20 l 20 -40"></path>
+                    </svg>
+                </button>
+
+                <span class="warn" id="already-exists">La plaque d'immatriculation est déjà
+                    enregistrée</span>
+                <span class="warn" id="invalid-pattern">La plaque ne respecte pas le standard
+                    AA-123-AA ou 1234-AA-00</span>
+                <span class="warn" id="max-reach">Vous ne pouvez pas enregistrer plus de 2 plaques d'immatriculation pour le même compte</span>
+                <span class="warn" id="default-warn">Le serveur a rencontré une erreur. Veuillez réessayer
+                    ultérieurement</span>
+            </form>
+        </div>
+    </div>
+</div>
+
+<dialog class="user-dialog" id="edit-mail-dialog">
+    <form action="{{url_for('edit_mail')}}" method="post">
+        <h3>Nouvelle adresse mail&ast;</h3>
+
+        <input id="new-mail-input" type="text" name="mail">
+
+        <p>&ast;En tant qu'utilisateur, la modification de votre adresse mail nécessite une vérification de votre compte par la direction.</p>
+        <div class="submit-container">
+            <button type="button">Annuler</button>
+            <button type="submit">Valider</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog class="user-dialog result" id="edit-mail-success-dialog">
+    <form action="{{url_for('get_account')}}" method="get">
+        <h3>Le changement d'adresse mail a été effectué</h3>
+
+        <button type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog result" id="edit-mail-failed-mail-already-bound-dialog">
+    <form method="dialog">
+        <h3>Un compte utilise déjà cette adresse mail</h3>
+
+        <button type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog result" id="edit-mail-failed-dialog">
+    <form method="dialog">
+        <h3>Une erreur serveur est survenue</h3>
+
+        <button type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="delete-plate-popup" id="delete-plate-dialog">
+    <form id="delete-plate" action="{{url_for('delete_booking')}}" method="dialog">
+        <h2>Supprimer votre plaque</h2>
+
+        <label>Etes-vous sûr de vouloir supprimer la plaque d'immatriculation <span id="delete-plate-label"></span> ?</label>
+
+        <button id="close-delete-dialog" type="reset" value="cancel">Annuler</button>
+        <button class="submit-dialog-btn" id="submit-delete-dialog" type="submit" value="delete">Supprimer</button>
+    </form>
+</dialog>
+
+<dialog class="delete-plate-popup" id="delete-plate-booking-error-dialog">
+    <form id="delete-plate-booking-error" action="{{url_for('get_account')}}" method="dialog">
+        <h3>Erreur lors de la suppression de votre plaque</h3>
+
+        <label>Votre plaque <span id="error-delete-plate-label"></span> ne peut être supprimée tant qu'elle est en lien avec un stationnement toujours en cours.</label>
+
+        <button class="submit-dialog-btn" type="submit">Ok</button>
+    </form>
+</dialog>
+
+{% if isAdmin %}
+<dialog class="user-dialog" id="critical-open-in-progress-dialog">
+    <form method="dialog">
+        <h3>Ouverture en cours</h3>
+        
+        <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="critical-open-success-dialog">
+    <form method="dialog">
+        <h3>Ouverture d'urgence effectuée avec succès</h3>
+
+        <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="critical-open-failed-dialog">
+    <form method="dialog">
+        <h3>Erreur lors de l'ouverture d'urgence de la barrière</h3>
+        
+        <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
+    </form>
+</dialog>
+{% endif %}
+
+
+{% endblock %}
+
+{% block script %}
+<script src="{{url_for('static', filename='js/account.js')}}"></script>
+<script src="{{url_for('static', filename='js/account-edit-mail.js')}}"></script>
+{% if isAdmin %}
+<script src="{{url_for('static', filename='js/admin-utils.js')}}"></script>
+{% endif %}
+{% endblock %}

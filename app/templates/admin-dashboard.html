@@ -1,0 +1,519 @@
+{% extends 'index.html' %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link rel="stylesheet" href="{{url_for('static', filename='css/user-dashboard.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/user-dashboard-responsive.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/admin-dashboard.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/admin-dashboard-responsive.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/stats.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/stats-responsive.css')}}">
+<title>Park7 - Tableau de bord</title>
+{% endblock %}
+
+{% block header %}
+<button class="problem-btn" id="problem-btn" type="button">Signaler un problème</button>
+<button class="critical-open-btn" id="in-header-critical-open" type="button">Ouverture d'urgence</button>
+
+<a id="notifications" href="{{url_for('admin_notifications')}}">
+    <svg viewBox="0 0 611.999 611.999">
+        <path d="M570.107,500.254c-65.037-29.371-67.511-155.441-67.559-158.622v-84.578c0-81.402-49.742-151.399-120.427-181.203
+                    C381.969,34,347.883,0,306.001,0c-41.883,0-75.968,34.002-76.121,75.849c-70.682,29.804-120.425,99.801-120.425,181.203v84.578
+                    c-0.046,3.181-2.522,129.251-67.561,158.622c-7.409,3.347-11.481,11.412-9.768,19.36c1.711,7.949,8.74,13.626,16.871,13.626
+                    h164.88c3.38,18.594,12.172,35.892,25.619,49.903c17.86,18.608,41.479,28.856,66.502,28.856
+                    c25.025,0,48.644-10.248,66.502-28.856c13.449-14.012,22.241-31.311,25.619-49.903h164.88c8.131,0,15.159-5.676,16.872-13.626
+                    C581.586,511.664,577.516,503.6,570.107,500.254z M484.434,439.859c6.837,20.728,16.518,41.544,30.246,58.866H97.32
+                    c13.726-17.32,23.407-38.135,30.244-58.866H484.434z M306.001,34.515c18.945,0,34.963,12.73,39.975,30.082
+                    c-12.912-2.678-26.282-4.09-39.975-4.09s-27.063,1.411-39.975,4.09C271.039,47.246,287.057,34.515,306.001,34.515z
+                        M143.97,341.736v-84.685c0-89.343,72.686-162.029,162.031-162.029s162.031,72.686,162.031,162.029v84.826
+                    c0.023,2.596,0.427,29.879,7.303,63.465H136.663C143.543,371.724,143.949,344.393,143.97,341.736z M306.001,577.485
+                    c-26.341,0-49.33-18.992-56.709-44.246h113.416C355.329,558.493,332.344,577.485,306.001,577.485z" />
+        <path d="M306.001,119.235c-74.25,0-134.657,60.405-134.657,134.654c0,9.531,7.727,17.258,17.258,17.258
+                    c9.531,0,17.258-7.727,17.258-17.258c0-55.217,44.923-100.139,100.142-100.139c9.531,0,17.258-7.727,17.258-17.258
+                    C323.259,126.96,315.532,119.235,306.001,119.235z" />
+    </svg>
+</a>
+{% endblock %}
+
+{% block main %}
+<button class="problem-btn" id="under-problem-btn" type="button">Signaler un problème</button>
+<button class="critical-open-btn" id="under-header-critical-open" type="button">Ouverture d'urgence</button>
+
+<div id="headline">
+    <h1 class="greet">Bonjour {{usrFirstname}}</h1>
+
+    {% if adminHeadline == "Administration" %}
+    <h3><a href="{{url_for(adminRoute)}}">Panneau d'{{adminHeadline}}</a></h3>
+    {% else %}
+    <h3><a href="{{url_for(adminRoute)}}">Panneau de {{adminHeadline}}</a></h3>
+    {% endif %}
+</div>
+
+<div class="bookings-table">
+
+    <div class="title">
+        <label>Vos stationnements</label>
+
+        <div>
+            <button id="add-booking-btn">Ajouter</button>
+            <span class="warn" id="no-plates">Aucune plaque enregistrée.<br>Vous pouvez en enregistrer une dans votre
+                espace compte</span>
+            <span class="warn" id="not-confirmed">Votre profil n'a pas été confirmé par un administrateur.<br>Un
+                administrateur doit confirmer votre profil pour que vous puissiez effectuer des stationnements.</span>
+        </div>
+    </div>
+
+    <div class="header">
+
+        <label>Immatriculation</label>
+        <label>Criticité</label>
+        <label>Horaire de début</label>
+        <label>Horaire de fin</label>
+        <label>Durée</label>
+
+    </div>
+
+    <div class="body">
+
+        {% if bookings |length > 0 %}
+        {% for book in bookings %}
+        <div class="entry" id="{{book['id']}}">
+            <label class="cell immat">{{ book["immat"] }}</label>
+            <label class="cell criticity">{{ book["criticity"] }}</label>
+            <label class="cell start">{{ book["book_start"] }}</label>
+            <label class="cell end">{{ book["book_end"] }}</label>
+            <label class="cell duration">{{ book["duration"] }}</label>
+            <a class="booking-action edit">
+                <svg stroke="green" fill="none" viewBox="-2 -9 120 120">
+                    <path stroke-width="5" stroke-linejoin="round"
+                        d="m 80 10 l -50 60 l -10 20 l 20 -10 l 50 -60 a 1 1 0 0 0 -10 -10"></path>
+                </svg>
+            </a>
+            <a class="booking-action delete">
+                <svg stroke="red" fill="none" viewBox="3 3 100 100">
+                    <path stroke-width="5" stroke-linejoin="round"
+                        d="m 30 30 l 0 60 l 40 0 l 0 -60 m 5 5 a 1 1 0 0 0 0 -10 l -50 0 a 1 1 0 0 0 0 10 m 20 -10 a 1 1 0 0 1 0 -5 l 10 0 a 1 1 0 0 1 0 5">
+                    </path>
+                </svg>
+            </a>
+        </div>
+        {% endfor %}
+        {% else %}
+        <label>Vous n'avez aucun stationnements à venir</label>
+        {% endif %}
+
+    </div>
+
+</div>
+
+<h1 class="greet" id="stats-headline">Statistiques du parking</h1>
+
+<div class="stats-container">
+
+    <div class="chart-container" id="fill-rate-container">
+        <h2 id="fill-rate-headline">Taux de remplissage du parking</h2>
+
+        <div class="chart-period-selector">
+            <input class="fill-rate-radio" type="radio" name="fill-rate-unit" id="fill-rate-hourly" value="hourly"
+                checked>
+            <label for="fill-rate-hourly">Horaire</label>
+
+            <input class="fill-rate-radio" type="radio" name="fill-rate-unit" id="fill-rate-daily" value="daily">
+            <label for="fill-rate-daily">Journalier</label>
+
+            <input class="fill-rate-radio" type="radio" name="fill-rate-unit" id="fill-rate-weekly" value="weekly">
+            <label for="fill-rate-weekly">Hebdomadaire</label>
+
+            <input class="fill-rate-radio" type="radio" name="fill-rate-unit" id="fill-rate-monthly" value="monthly">
+            <label for="fill-rate-monthly">Mensuel</label>
+        </div>
+
+
+        <canvas class="chart" id="fill-rate-chart"></canvas>
+
+        <form class="date-selector" id="fill-rate-change-period">
+            <label for="fill-rate-start-date">Du</label>
+            <input class="chart-date" type="text" name="fill-rate-start-date" id="fill-rate-start-date" required>
+            <input class="chart-time" type="text" name="fill-rate-start-time" id="fill-rate-start-time" value="00:00"
+                required>
+
+            <label for="fill-rate-end-date">Jusqu'au</label>
+            <input class="chart-date" type="text" name="fill-rate-start-end-date" id="fill-rate-end-date" required>
+            <input class="chart-time" type="text" name="fill-rate-start-end-time" id="fill-rate-end-time" value="00:00"
+                required>
+
+            <button type="submit">Mettre à jour</button>
+        </form>
+    </div>
+
+    <div class="chart-container" id="real-fill-rate-container">
+        <h2 id="real-fill-rate-headline">Taux de remplissage réel</h2>
+
+        <div class="chart-period-selector">
+            <input class="real-fill-rate-radio" type="radio" name="real-fill-rate-unit" id="real-fill-rate-hourly"
+                value="hourly" checked>
+            <label for="real-fill-rate-hourly">Horaire</label>
+
+            <input class="real-fill-rate-radio" type="radio" name="real-fill-rate-unit" id="real-fill-rate-daily"
+                value="daily">
+            <label for="real-fill-rate-daily">Journalier</label>
+
+            <input class="real-fill-rate-radio" type="radio" name="real-fill-rate-unit" id="real-fill-rate-weekly"
+                value="weekly">
+            <label for="real-fill-rate-weekly">Hebdomadaire</label>
+
+            <input class="real-fill-rate-radio" type="radio" name="real-fill-rate-unit" id="real-fill-rate-monthly"
+                value="monthly">
+            <label for="real-fill-rate-monthly">Mensuel</label>
+        </div>
+
+        <canvas class="chart" id="real-fill-rate-chart"></canvas>
+
+        <form class="date-selector" id="real-fill-rate-change-period">
+            <label for="real-fill-rate-start-date">Du</label>
+            <input class="chart-date" type="text" name="real-fill-rate-start-date" id="real-fill-rate-start-date"
+                required>
+            <input class="chart-time" type="text" name="real-fill-rate-start-time" id="real-fill-rate-start-time"
+                value="00:00" required>
+
+            <label for="real-fill-rate-end-date">Jusqu'au</label>
+            <input class="chart-date" type="text" name="real-fill-rate-start-end-date" id="real-fill-rate-end-date"
+                required>
+            <input class="chart-time" type="text" name="real-fill-rate-start-end-time" id="real-fill-rate-end-time"
+                value="00:00" required>
+
+            <button type="submit">Mettre à jour</button>
+        </form>
+    </div>
+
+    <div class="chart-container" id="park-usage-container">
+        <h2 id="park-usage-headline">Taux d'utilisation du parking</h2>
+        <canvas class="chart" id="park-usage-chart"></canvas>
+    </div>
+
+    <div class="chart-container" id="park-duration">
+        <h2 id="park-duration-headline">Durée de stationnement</h2>
+
+        <div class="wrapper">
+            <form action="{{url_for('get_parkduration_plate')}}" id="park-duration-by-plate">
+                <label for="plate-duration">Par plaque:</label>
+                <input type="text" name="plate-duration" id="plate-duration-input" placeholder="AA-123-AA">
+    
+                <button type="submit">Recherche par plaque</button>
+            </form>
+            
+            <form id="park-duration-by-entity" action="{{url_for('get_parkduration_entity')}}">
+                <label for="entity-duration">Par structure:</label>
+                <select name="entity-duration" id="entity-duration-selector">
+                    {% for e in entities %}
+                    <option value="{{e[0]}}">{{e[1]}}</option>
+                    {% endfor %}
+                </select>
+    
+                <button type="submit">Recherche par structure</button>
+            </form>
+
+            <p class="search-result hidden" id="park-duration-result"></p>
+        </div>
+    </div>
+
+    <div class="chart-container error-matrix-container">
+        <h2>Compteur des erreurs de barrière</h2>
+        <div class="matrix-section top-left">
+            <span class="label">Erreur lecture caméra</span>
+        </div>
+        <div class="matrix-section top-right">
+            <span class="label">Non erreur lecture caméra</span>
+        </div>
+        <div class="matrix-section bottom-left">
+            <span class="value" id="bearerTrue-value">0</span>
+        </div>
+        <div class="matrix-section bottom-right">
+            <span class="value" id="bearerFalse-value">0</span>
+        </div>
+    </div>
+    
+</div>
+
+<dialog class="add-booking-popup" id="add-booking-dialog">
+    <div class="headline">
+        <h1 class="add-booking-headline">Ajouter un stationnement</h1>
+
+        <button class="close" id="close-add-booking-dialog" value="cancel"><img
+                src="{{url_for('static', filename='assets/close.png')}}" alt="Close"></button>
+    </div>
+
+    <form class="book" id="add-booking" action="{{url_for('add_booking')}}" method="dialog">
+
+        <div class="row" id="infos">
+
+            <div class="cell">
+                <label id="plate">Votre véhicule</label>
+                <select name="plate" id="plate-selector" required></select>
+            </div>
+
+            <div class="cell">
+                <label class="repeat">Périodicité</label>
+                <select name="interval" id="period-selector">
+                    <option value="unique">Pas de répétition</option>
+                    <option value="daily">Quotidienne</option>
+                    <option value="weekly">Hebdomadaire</option>
+                    <option value="monthly">Mensuelle</option>
+
+                    <!--<option value="weekday">La semaine (Lundi au Vendredi)</option>-->
+                    <option value="custom">Personnalisé...</option>
+                </select>
+            </div>
+        </div>
+        <div class="row" id="datetimes">
+            <label id="start">Date et durée du stationnement (<span id="duration"></span>)</label>
+
+            <!--<label class="date pick-label" id="date-start-label">-->
+            <input class="date pick-label" id="start-date-picker" name="booking-date-start" type="text" readonly
+                required>
+            <!--</label>-->
+
+            <label class="time pick-label">
+                <input id="time-start-picker" name="booking-time-start" type="text"
+                    pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" required>
+            </label>
+
+            <!--<label class="date pick-label" id="date-end-label">-->
+            <input class="date pick-label" id="end-date-picker" name="booking-date-end" type="text" readonly required>
+            <!--</label>-->
+
+            <label class="time pick-label">
+                <input id="time-end-picker" name="booking-time-end" type="text" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]"
+                    required>
+            </label>
+
+            <span class="warn" id="weekly-booking-restrict">Vous ne pouvez pas changer la date lors d'une répétition
+                personnalisée hebdomadaire</span>
+        </div>
+
+        <div class="row" id="end-recurrence">
+            <label>Fin de la répétition le </label>
+
+            <!--<label class="date pick-label" id="recurrence-date-end-label">-->
+            <input class="date pick-label" id="recurrence-end-date-picker" name="recurrence-booking-date-end"
+                type="text" readonly required>
+            <!--</label>-->
+        </div>
+
+        <button class="submit-booking-form" id="submit-booking" type="submit" value="submit">Ajouter</button>
+    </form>
+
+</dialog>
+
+<dialog class="add-booking-popup" id="add-booking-custom-dialog">
+
+    <div class="headline">
+        <h3 class="add-booking-headline">Répétition personnalisé</h3>
+
+        <button class="close" id="close-add-booking-custom-dialog" value="cancel">
+            <img src="{{url_for('static', filename='assets/close.png')}}" alt="Close">
+        </button>
+    </div>
+
+    <form class="book" id="add-booking-custom" method="dialog">
+        <label>Se répète tous les </label>
+
+        <div id="custom-recurrence-wrapper">
+            <label class="date pick-label" id="custom-recurrence-amount-label">
+                <input id="custom-recurrence-picker" name="custom-recurrence-amount" type="number" value="1" min="1"
+                    required>
+            </label>
+
+            <select name="custom-interval" id="custom-recurrence-interval-selector">
+                <option value="day" selected="selected" autocomplete="off">jours</option>
+                <option value="week" autocomplete="off">semaines</option>
+                <option value="month" autocomplete="off">mois</option>
+            </select>
+        </div>
+
+        <div id="custom-recurrence-week" style="display:none;">
+            <label>Le: </label>
+
+            <div id="days-pins">
+                <input type="checkbox" name="monday" id="custom-monday" value="monday">
+                <label class="unselectable" for="custom-monday">L</label>
+                <input type="checkbox" name="tuesday" id="custom-tuesday" value="tuesday">
+                <label class="unselectable" for="custom-tuesday">M</label>
+                <input type="checkbox" name="wednesday" id="custom-wednesday" value="wednesday">
+                <label class="unselectable" for="custom-wednesday">M</label>
+                <input type="checkbox" name="thursday" id="custom-thursday" value="thursday">
+                <label class="unselectable" for="custom-thursday">J</label>
+                <input type="checkbox" name="friday" id="custom-friday" value="friday">
+                <label class="unselectable" for="custom-friday">V</label>
+                <input type="checkbox" name="saturday" id="custom-saturday" value="saturday">
+                <label class="unselectable" for="custom-saturday">S</label>
+                <input type="checkbox" name="sunday" id="custom-sunday" value="sunday">
+                <label class="unselectable" for="custom-sunday">D</label>
+            </div>
+        </div>
+
+
+
+        <button class="submit-booking-form" id="submit-booking-custom" type="submit" value="submit">Valider</button>
+    </form>
+</dialog>
+
+
+<dialog class="delete-booking-popup" id="delete-booking-dialog">
+    <form id="delete-booking" action="{{url_for('delete_booking')}}" method="dialog">
+        <h2>Supprimer votre stationnement</h2>
+
+        <label>Etes-vous sûr de vouloir supprimer votre stationnement du <span id="delete-booking-date-start"></span> au
+            <span id="delete-booking-date-end"></span> ?</label>
+
+        <button id="close-delete-dialog" type="reset" value="cancel">Annuler</button>
+        <button id="submit-delete-dialog" type="submit" value="delete">Supprimer</button>
+
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="critical-open-in-progress-dialog">
+    <form method="dialog">
+        <h3>Ouverture en cours</h3>
+
+        <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="critical-open-success-dialog">
+    <form method="dialog">
+        <h3>Ouverture d'urgence effectuée avec succès</h3>
+
+        <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="critical-open-failed-dialog">
+    <form method="dialog">
+        <h3>Erreur lors de l'ouverture d'urgence de la barrière</h3>
+
+        <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog id="rgpdDialog" data-checkrgpd="{{ checkRGPD }}">
+    <form method="dialog">
+        <h2>Accepter les CGU et la politique RGPD</h2>
+        <p>L’Institut Catholique de Lille (ICL), dont le siège est situé au sis 60 boulevard Vauban CS 40109 - 59016 LILLE CEDEX, collecte les données personnelles de ce formulaire dans le cadre de l’expérimentation de la gestion mutualisée de parking (PKI7). Ce traitement de données repose sur votre consentement. La fourniture des données listée ci-dessus est nécessaire pour la réalisation du traitement et l’accès aux services.</p>
+        
+        <p>Les données seront communiquées au personnel de l’ICL ainsi qu’à ses sous-traitants techniques, en charge de la mise à disposition des places de parking.</p>
+       
+        <p>Les données seront conservées pendant un an à l’issue de votre dernière demande d’accès au parking.</p>
+        
+        <p>Vous pouvez accéder aux données vous concernant, les rectifier, demander leur effacement, exercer votre droit à la limitation du traitement de vos données ou retirer à tout moment votre consentement au traitement de vos données.</p>
+
+        <p>Pour exercer ces droits ou pour toute question sur le traitement de vos données dans ce dispositif, vous pouvez contacter le Délégué à la Protection des Données de l’ICL à l’adresse suivante : <a href="mailto:dpo@univ-catholille.fr">dpo@univ-catholille.fr</a></p>
+
+        <p>Vous pouvez également adresser une réclamation à la CNIL.</p>
+
+        <div>
+            <input type="checkbox" id="acceptRGPD" required>
+            <label for="acceptRGPD">J’accepte de fournir mes données personnelles afin d’accéder aux services</label>
+        </div>
+        <menu>
+            <button id="acceptButton" type="submit">Accepter</button>
+        </menu>
+    </form>
+</dialog>
+
+<dialog id="report-problem-dialog" class="user-dialog">
+    <form id="report-problem-form" method="dialog">
+        <h3 style="text-align: center;">Signaler un problème</h3>
+        <div style="display: flex; justify-content: space-between;">
+            <div>
+                <label for="firstName" style="display: block; font-size: small;">Prénom:</label>
+                <input type="text" id="firstName" name="firstName" readonly>
+            </div>
+            <div>
+                <label for="lastName" style="display: block; font-size: small;">Nom:</label>
+                <input type="text" id="lastName" name="lastName" readonly>
+            </div>
+        </div>
+        <div>
+            <label for="email" style="display: block; font-size: small;">Email:</label>
+            <input type="email" id="email" name="email" readonly>
+        </div>
+        <div>
+            <label for="problemType" style="display: block; font-size: small;">Je signale un dysfonctionnement :</label>
+            <select id="problemType" name="problemType" required>
+                <option value="" disabled selected></option>
+                <option value="barrierIssue">La barrière de s'ouvre pas</option>
+                <option value="planningFull">La plateforme m’indique que les créneaux de stationnements sont pleins</option>
+                <option value="other">Autre</option>
+            </select>
+        </div>
+        <div id="barrierIssueFields" style="display:none;">
+            <label for="plateNumber" style="display: block; font-size: small;">Plaque concernée:</label>
+            <select id="plateNumber" name="plateNumber"></select>
+            <label for="passageDate" style="display: block; font-size: small;">Date de passage:</label>
+            <input type="date" id="passageDate" name="passageDate">
+            <label for="passageTime" style="display: block; font-size: small;">Heure de passage:</label>
+            <input type="time" id="passageTime" name="passageTime">
+        </div>
+        <div id="otherIssueField" style="display:none;">
+            <label for="comment" style="display: block; font-size: small;">Commentaire:</label>
+            <textarea id="comment" name="comment"></textarea>
+        </div>
+        <div id="planningFullFields" style="display:none;">
+            <label for="bookingStartDate" style="display: block; font-size: small;">Début de réservation:</label>
+            <input type="date" id="bookingStartDate" name="bookingStartDate">
+            <input type="time" id="bookingStartTime" name="bookingStartTime">
+        
+            <label for="bookingEndDate" style="display: block; font-size: small;">Fin de réservation:</label>
+            <input type="date" id="bookingEndDate" name="bookingEndDate">
+            <input type="time" id="bookingEndTime" name="bookingEndTime">
+        
+            <label for="repetition" style="display: block; font-size: small;">Périodicité:</label>
+            <select id="repetition" name="repetition">
+                <option value="none">Pas de répétition</option>
+                <option value="daily">Quotidienne</option>
+                <option value="weekly">Hebdommadaire</option>
+                <option value="monthly">Mensuelle</option>
+                <option value="custom">Autre</option>
+            </select>
+        </div>        
+        <div id="barrierIssueConfirmation" style="display:none; margin-top: 10px; text-align: center;">
+            <input type="checkbox" id="certifyInfo" name="certifyInfo" required><p>Je certifie que les informations sont exactes</p>
+        </div>        
+        <div style="text-align: center; margin-top: 10px;">
+            <button class="valid" type="submit">Valider</button>
+            <button class="cancel" type="button" onclick="document.getElementById('report-problem-dialog').close();">Quitter</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="problem-report-success-dialog" class="user-dialog">
+    <form method="dialog">
+        <h3 style="text-align: center;">Problème signalé avec succès</h3>
+        <div style="text-align: center;">
+            <button class="valid" type="submit" onclick="document.getElementById('problem-report-success-dialog').close();">Ok</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="problem-report-failure-dialog" class="user-dialog">
+    <form method="dialog">
+        <h3 style="text-align: center;">Erreur lors du signalement du problème</h3>
+        <div style="text-align: center;">
+            <button class="valid" type="submit" onclick="document.getElementById('problem-report-failure-dialog').close();">Ok</button>
+        </div>
+    </form>
+</dialog>
+
+{% endblock %}
+
+{% block script %}
+<script src="{{url_for('static', filename='js/dashboard.js')}}"></script>
+<script src="{{url_for('static', filename='js/admin-utils.js')}}"></script>
+<script src="{{url_for('static', filename='js/stats/stats-general.js')}}"></script>
+<script src="{{url_for('static', filename='js/stats/stats-fillrate.js')}}"></script>
+<script src="{{url_for('static', filename='js/stats/stats-park-usage.js')}}"></script>
+<script src="{{url_for('static', filename='js/stats/stats-realfillrate.js')}}"></script>
+<script src="{{url_for('static', filename='js/stats/stats-park-duration.js')}}"></script>
+{% endblock %}

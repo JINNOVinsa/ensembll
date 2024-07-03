@@ -1,0 +1,19 @@
+@media screen and (max-width: 1200px) {
+    .notif-wrapper {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .notification {
+        width: 100%;
+    }
+
+    .notification .notification-footer {
+        align-self: center;
+    
+        flex-direction: column;
+
+        gap: 0px;
+    }
+}

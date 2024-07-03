@@ -1,0 +1,50 @@
+{% extends 'index.html' %}
+
+{% block head %}
+
+<link rel="stylesheet" href="{{url_for('static', filename='css/auth.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/auth-mobile.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/reset-pswd.css')}}">
+<title>Park7 - Accueil</title>
+
+{% endblock %}
+
+{% block main %}
+
+<form method="POST" action="{{url_for('request_reset_pswd')}}" style="min-height:500px;" id="reset-form">
+
+    <label class="title">Récupération du mot de passe</label>
+
+    <input class="form-input" id="mail" name="mail" type="email" placeholder="Adresse mail" required>
+
+    <div class="form-footer">
+        <a class="auth-navigate" href="{{url_for('login')}}">Se connecter</a>
+        <button class="form-submit" type="submit">Valider</button>
+    </div>
+</form>
+
+<dialog class="user-dialog" id="success-dialog">
+    <form action="{{url_for('login')}}" method="get">
+        <h3>Réinitialisation prise en compte</h3>
+
+        <p>Si votre adresse a été reconnue dans notre base de donnée, un mail vous a été adressé.
+            Cliquez sur le lien contenu dans ce mail pour réinitialiser votre mot de passe</p>
+
+        <button type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="failed-dialog">
+    <form method="dialog">
+        <h3>Demande de réinitialisation échouée</h3>
+
+        <p>La demande de réinitialisation a échouée. Veuillez réessayer ou effectuer une nouvelle demande.</p>
+
+        <button type="submit">Ok</button>
+    </form>
+</dialog>
+{% endblock %}
+
+{% block script %}
+<script src="{{url_for('static', filename='js/reset-pswd.js')}}"></script>
+{% endblock %}

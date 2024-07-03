@@ -1,0 +1,169 @@
+{% extends 'super-admin-pannel.html' %}
+
+{% block additionnalHead %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/admin-pannel.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/admin-pannel-confirm.css')}}">
+{% endblock %}
+
+{% block tableTitle %}
+{% if usercount > 1 %}
+<label>{{usercount}} Usagers à valider</label>
+{% else %}
+<label>{{usercount}} Usager à valider</label>
+{% endif %}
+{% endblock %}
+
+{% block tableHeader %}
+<label>Nom</label>
+<label>Prénom</label>
+<label>Criticité</label>
+<label>Profil</label>
+<label>Consentement RGPD</label>
+{% endblock %}
+
+{% block tableBody %}
+{% if usercount > 0 %}
+
+
+{% else %}
+<label>Aucun utilisateur à valider</label>
+{% endif %}
+{% endblock %}
+
+{% block underTable %}
+<dialog class="user-dialog expand" id="expand-user-dialog">
+    <form action="{{url_for('adminPannelConfirm')}}" method="dialog">
+        <h2>Profil renseigné par <span id="user-name"></span></h2>
+
+        <div class="content">
+            <label class="title">Nom</label>
+            <label id="lastname"></label>
+            <label class="title">Prénom</label>
+            <label id="firstname"></label>
+            <label class="title">Structure</label>
+            <label id="entity"></label>
+            <label class="title">Type de profil</label>
+            <label id="profile"></label>
+            <label class="title">Adresse mail</label>
+            <label id="mail"></label>
+            <label class="title">Numéro de téléphone</label>
+            <label id="tel"></label>
+            <label class="title">Plaques d'immatriculation</label>
+            <div id="immat"></div>
+        </div>
+
+        <button class="close-user-dialog" type="reset" value="cancel">Fermer</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog expand" id="edit-user-dialog">
+    <form action="{{url_for('superEditUser')}}" method="dialog">
+        <h2>Profil renseigné par <span id="user-name"></span></h2>
+
+        <div class="content">
+            <label for="lastname" class="title">Nom</label>
+            <input type="text" name="lastname" id="lastname"></input>
+
+            <label for="firstname" class="title">Prénom</label>
+            <input type="text" name="firstname" id="firstname"></input>
+            
+            <label for="entity" class="title">Structure</label>
+            <select name="entity" id="edit-entity-selector">
+                {% for e in entities %}
+                <option value="{{e[0]}}">{{e[1]}}</option>
+                {% endfor %}
+            </select>
+
+            <label for="profile" class="title">Type de profil</label>
+            <select name="profile" id="edit-profile-selector">
+            </select>
+            
+            <label for="mail" class="title">Adresse mail</label>
+            <input type="email" name="mail" id="mail"></input>
+            
+            <label for="tel" class="title">Numéro de téléphone</label>
+            <input type="text" name="tel" id="tel"></input>
+            
+            <label class="title">Plaques d'immatriculation</label>
+            <div id="immat"></div>
+        </div>
+
+        <div class="confirm-zone">
+            <input type="checkbox" name="valid-cb" id="edit-input-valid-checkbox">
+            <label for="edit-input-valid-checkbox">Je confirme les modifications apportées à l'utilisateur</label>
+        </div>
+
+        <div class="submit-zone">
+            <button class="close-user-dialog" type="reset" value="cancel">Annuler</button>
+            <button class="close-user-dialog danger" id="delete-user" type="button" value="delete" disabled="disabled">Supprimer l'utilisateur</button>
+            <button class="close-user-dialog danger" id="submit-edit-user" type="submit" disabled="disabled">Modifier</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog class="user-dialog dialog-user-result" id="edit-user-success-dialog">
+    <form action="{{url_for('superAdminPannelConfirm')}}" method="get">
+        <h3>Modifications effectuées avec succès</h3>
+
+        <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
+    </form>
+</dialog>
+
+
+<dialog class="user-dialog dialog-user-result" id="edit-user-failed-dialog">
+    <form method="dialog">
+        <h3>Echec de la modification de l'utilisateur pour une raison inconnue</h3>
+
+        <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog dialog-user-result" id="delete-user-success-dialog">
+    <form action="{{url_for('superAdminPannelConfirm')}}" method="get">
+        <h3>Suppression effectué avec succès</h3>
+
+        <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog dialog-user-result" id="delete-user-failed-dialog">
+    <form method="dialog">
+        <h3>Echec de la suppression de l'utilisateur pour une raison inconnue</h3>
+
+        <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="confirm-user-ask-dialog">
+    <form method="dialog">
+        <p>Êtes-vous sûr de vouloir confirmer le profil de <span id="confirm-user-text"></span> ?</p>
+        
+        <div id="btns">
+            <button class="close-user-dialog" id="cancel-ask-dialog" type="reset">Annuler</button>
+            <button class="close-user-dialog danger" id="submit-ask-dialog" type="submit">Confirmer</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="confirm-success-dialog">
+    <form action="{{url_for('superAdminPannelConfirm')}}" method="get">
+        <h3>Confirmation réussie</h3>
+        <p>Utilisateur <span id="confirm-user-text"></span> confirmé avec succès</p>
+        <button class="close-user-dialog" type="submit">Ok</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="confirm-failed-dialog">
+    <form method="dialog">
+        <h3>Echec de la confirmation</h3>
+        <p>La confirmation de l'utilisateur <span id="confirm-user-text"></span> a échouée pour une raison inconnue</p>
+        <button class="close-user-dialog">Ok</button>
+    </form>
+</dialog>
+{% endblock %}
+
+{% block additionnalScript %}
+<script src="{{url_for('static', filename='js/super-admin-general.js')}}"></script>
+<script src="{{url_for('static', filename='js/super-admin-confirm.js')}}"></script>
+<script src="{{url_for('static', filename='js/admin-pannel-search-users.js')}}"></script>
+{% endblock %}

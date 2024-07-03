@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style-responsive.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/anims.css')}}">
+    <link rel="icon" type="image/png" href="../static/assets/ensembll_logo_icon.png">
+    {% block head %} {% endblock %}
+
+</head>
+
+<body>
+
+    <header>
+
+        <a href="{{url_for('home')}}">
+            <img src="{{url_for('static', filename='assets/ensembll_logo.png')}}" alt="Logo d'Ensembll">
+        </a>
+
+        <nav>
+            
+            {% block header %} {% endblock %}
+
+            <a id="profile-icon" href="{{url_for('get_account')}}">
+                <svg stroke="black" fill="none" viewBox="5 5 90 90">
+                    <path stroke-width="4"
+                        d="m 50 20 a 1 1 0 0 0 0 60 a 1 1 0 0 0 0 -60 m -18 54 c 8 -30 27 -31 36 0 m -18 -23 a 1 1 0 0 0 0 -20 a 1 1 0 0 0 0 20">
+                    </path>
+                </svg>
+            </a>
+
+            {% if connected %}
+            <a id="logout" href="{{url_for('logout')}}">
+                <svg stroke="#e83200" fill="none" viewBox="5 5 90 90">
+                    <path stroke-width="4" stroke-linejoin="round" stroke-linecap="round"
+                        d="m 40 40 v -20 h 40 v 60 h -40 v -20 m -20 -10 h 50 l -15 -10 m 15 10 l -15 10">
+                    </path>
+                </svg>
+            </a>
+            {% endif %}
+        </nav>
+
+    </header>
+
+    <main>
+
+        {% block main %} {% endblock %}
+
+    </main>
+
+    <footer>
+
+    </footer>
+
+    {% block script %} {% endblock %}
+</body>
+
+</html>

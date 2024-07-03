@@ -1,0 +1,7 @@
+models/__pycache__
+models/api/__pycache__
+models/database/__pycache__
+models/Objects/__pycache__
+token
+.env
+venv/

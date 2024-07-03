@@ -1,0 +1,22 @@
+:root {
+    --main-blue: #33CC99;
+    --main-blue-secondary: #87ABD5;
+
+    --main-blue-dark: #0063a5;
+
+    --hover-grey: rgb(240, 240, 240);
+
+    --valid-green: #3d8235;
+    --valid-green-dark: #296323;
+
+    --pending-orange: #dd6c02;
+    --pending-orange-dark: #d35300;
+
+    --invalid-red: #eb0000;
+    --invalid-red-dark: #D40000;
+
+    --disabled-color: grey;
+
+    --problem-color: #004960;
+    --problem-color-dark: #003c4c;
+}

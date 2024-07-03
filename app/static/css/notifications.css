@@ -1,0 +1,114 @@
+#headline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#headline h1 {
+    width: fit-content;
+}
+
+#headline a {
+    color: var(--main-blue);
+    text-decoration: none;
+
+    padding: 10px 15px 10px 15px;
+    border-radius: 5px;
+}
+
+#headline a:hover {
+    background-color: var(--hover-grey);
+}
+
+.notif-wrapper {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    margin-top: 20px;
+    margin-bottom: 75px;
+}
+
+.notification {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 25px;
+
+    line-height: 1.5rem;
+
+    transition: height 0.5s;
+}
+
+.notification button {
+    font-weight: 700;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    margin-top: 16px;
+    text-align: center;
+}
+
+.notification button:hover {
+    background-color: var(--hover-grey);
+}
+
+.notification .alert-detail {
+    color: var(--main-blue);
+}
+
+.notification .delete-alerts {
+    color: red;
+}
+
+.notification .notification-footer {
+    align-self: flex-end;
+
+    display: flex;
+    gap: 20px;
+}
+
+.alert-expand {
+    height: 0px;
+    overflow: hidden;
+
+    transition: height 0.5s;
+}
+
+.alert-expand-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: space-evenly;
+    padding-top: 16px;
+
+}
+
+dialog form {
+    display: flex;
+    flex-direction: column;
+}
+
+dialog form h3 {
+    width: fit-content;
+}
+
+dialog button {
+    align-self: flex-end;
+    color: var(--main-blue);
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 32px;
+    cursor: pointer;
+}
+
+dialog button:hover {
+    background-color: var(--hover-grey);
+}

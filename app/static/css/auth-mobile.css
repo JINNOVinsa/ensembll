@@ -1,0 +1,36 @@
+/* Keep form center on tablet with display flex on main*/
+@media screen and (max-width: 768px) {
+    form {
+        width: 90%;
+        border: none;
+    }
+
+    .form-footer {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+
+    .auth-navigate {
+        width: 100%;
+        margin-top: 20px;
+        border: var(--main-blue) 1px solid;
+        border-radius: 5px;
+        text-align: center;
+        padding: 15px 0 15px 0;
+    }
+}
+
+/* Remove flex on main to place items on top of mobile's screen */
+@media screen and (max-width: 480px) {
+    main {
+        align-items: flex-start;
+    }
+
+    form {
+        width: 100%;
+        padding-right: 0px;
+        padding-left: 0px;
+        margin-right: 0px;
+        margin-left: 0px;
+    }
+}

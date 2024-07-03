@@ -1,0 +1,326 @@
+.add-booking-popup {
+    width: 800px;
+    max-width: 800px;
+}
+
+.add-booking-popup .headline {
+    display: grid;
+    grid-template-columns: 1fr 40px;
+    margin-bottom: 50px;
+
+    align-items: center;
+}
+
+.add-booking-popup .headline .close {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.add-booking-popup .headline .close>img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+}
+
+.add-booking-popup #add-booking {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    row-gap: 40px;
+}
+
+.add-booking-popup #add-booking .row {
+    display: flex;
+    flex-direction: column;
+    grid-column: 1 / -1;
+
+    position: relative;
+}
+
+.add-booking-popup #add-booking .row .cell>label,
+.add-booking-popup #add-booking .row>label {
+    font-weight: 700;
+}
+
+.add-booking-popup #add-booking select {
+    height: 30px;
+
+    background-color: transparent;
+    outline: none;
+    border: none;
+    border-bottom: 3px var(--main-blue) solid;
+
+    font-size: 1em;
+}
+
+.add-booking-popup #add-booking .row.head {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    row-gap: 40px;
+    column-gap: 50px;
+}
+
+.add-booking-popup #add-booking .row.head .cell {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.add-booking-popup #add-booking .row#user-row {
+    width: 70%;
+    align-self: center;
+}
+
+.add-booking-popup #add-booking .row#datetimes {
+    display: grid;
+    grid-template-columns: 240px 140px;
+    grid-auto-flow: row;
+    align-items: center;
+    gap: 12px;
+}
+
+.add-booking-popup #add-booking .row#datetimes #start {
+    grid-column: 1 / 3;
+}
+
+.add-booking-popup .book .pick-label {
+    width: fit-content;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.date {
+    width: fit-content;
+    /*max-width: 250px;*/
+}
+
+.add-booking-popup .book .pick-label input {
+    max-width: 100%;
+    border: none;
+    background-color: transparent;
+    outline: none;
+
+    font-size: 1em;
+}
+
+.add-booking-popup .book .pick-label:hover {
+    background-color: #e7e7e7;
+}
+
+.add-booking-popup form button {
+    align-self: flex-end;
+    width: 8rem;
+    color: white;
+    font-size: 1.2em;
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--main-blue);
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.add-booking-popup .book button:hover {
+    background-color: var(--main-blue-dark);
+    cursor: pointer;
+}
+
+.add-booking-popup .book button:disabled {
+    background-color: var(--disabled-color);
+    cursor: auto;
+}
+
+.add-booking-popup .row#end-recurrence {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+}
+
+.add-booking-popup .row#end-recurrence label {
+    width: fit-content;
+}
+
+.add-booking-popup #weekly-booking-restrict {
+    position: absolute;
+    font-size: 0.9em;
+    top: 100%;
+    z-index: 100;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog {
+    width: 400px;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog .headline {
+    margin-bottom: 25px;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog .headline .close>img {
+    width: 30px;
+    height: 30px;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog form>label,
+.add-booking-popup#add-user-booking-custom-dialog form>div>label {
+    font-weight: 700;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog #custom-recurrence-week {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog #custom-recurrence-week #day-pins {
+    height: fit-content;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog #custom-recurrence-week input[type="checkbox"]:not(:checked),
+.add-booking-popup#add-user-booking-custom-dialog #custom-recurrence-week input[type="checkbox"]:checked {
+    position: absolute;
+    left: -99999%;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog #custom-recurrence-week input[type="checkbox"] + label {
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 50%;
+    padding: 5px 10px;
+    background-color: rgb(214, 214, 214);
+    text-align: center;
+    vertical-align: middle;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog #custom-recurrence-week input[type="checkbox"]:not(:checked) + label {
+    background-color: rgb(214, 214, 214);
+    color: black;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog #custom-recurrence-week input[type="checkbox"]:checked + label {
+    background-color: var(--main-blue);
+    color: white;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog form>button {
+    align-self: flex-end;
+    padding: 10px 15px 10px 15px;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog #custom-recurrence-wrapper {
+    display: flex;
+    gap: 15px;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog #custom-recurrence-wrapper label {
+    background-color: #e7e7e7;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog #custom-recurrence-wrapper label:hover {
+    background-color: rgb(214, 214, 214);;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog #custom-recurrence-wrapper input {
+    width: 50px;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog #custom-recurrence-wrapper select {
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog #custom-recurrence-wrapper select:hover {
+    background-color: rgb(214, 214, 214);
+}
+
+#add-weekly-booking-restrict {
+    visibility: hidden;
+    width: 260px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 8px 10px;
+
+    opacity: 0;
+    transition: opacity 0.5s;
+    
+    font-size: 0.7em;
+    
+    position: absolute;
+    z-index: 3;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#add-end-recurrence {
+    display: flex;
+    flex-direction: row !important;
+    gap: 10px;
+    align-items: center;
+}
+
+#add-end-recurrence label {
+    width: fit-content;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog #add-custom-recurrence-week {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog #add-custom-recurrence-week #day-pins {
+    height: fit-content;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog #add-custom-recurrence-week input[type="checkbox"]:not(:checked),
+.add-booking-popup#add-user-booking-custom-dialog #add-custom-recurrence-week input[type="checkbox"]:checked {
+    position: absolute;
+    left: -99999%;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog #add-custom-recurrence-week input[type="checkbox"] + label {
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 50%;
+    padding: 5px 10px;
+    background-color: rgb(214, 214, 214);
+    text-align: center;
+    vertical-align: middle;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog #add-custom-recurrence-week input[type="checkbox"]:not(:checked) + label {
+    background-color: rgb(214, 214, 214);
+    color: black;
+}
+
+.add-booking-popup#add-user-booking-custom-dialog #add-custom-recurrence-week input[type="checkbox"]:checked + label {
+    background-color: var(--main-blue);
+    color: white;
+}
+
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

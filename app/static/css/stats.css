@@ -1,0 +1,135 @@
+.stats-container {
+    margin-top: 50px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 100px;
+}
+
+.chart-container {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.chart-container h2 {
+    align-self: flex-start;
+    margin-bottom: 20px;
+}
+
+.chart {
+    max-width: 800px;
+    max-height: 300px;
+}
+
+.chart-period-selector {
+    margin: 16px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.chart-period-selector input[type="radio"] {
+    position: absolute;
+    left: -999999999%;
+}
+
+.chart-period-selector input[type="radio"] + label {
+    cursor: pointer;
+}
+
+.chart-period-selector input[type="radio"]:checked + label {
+    border-bottom: 1px solid var(--main-blue);
+}
+
+.date-selector {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 5px;
+    margin-top: 20px;
+}
+
+.date-selector input {
+    outline: none;
+    border: none;
+    font-size: 1em;
+    border-bottom: 2px solid var(--main-blue);
+}
+
+.date-selector .chart-date {
+    width: 6rem;
+}
+
+.date-selector .chart-time {
+    width: 3rem;
+    margin-right: 20px;
+}
+
+.chart-container button {
+    color: var(--main-blue);
+    cursor: pointer;
+    padding: 7px;
+    border-radius: 5px;
+    font-weight: 700;
+}
+
+.chart-container button:hover {
+    background-color: var(--hover-grey);
+}
+
+.chart-container select {
+    background-color: transparent;
+    outline: none;
+    border: none;
+    border-bottom: 2px solid var(--main-blue);
+
+    font-size: 1rem;
+}
+
+.chart-container .wrapper {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.chart-container#park-duration form label {
+    display: inline-block;
+    width: 150px;
+}
+
+.chart-container#park-duration form input,
+.chart-container#park-duration form select {
+    width: 200px;
+}
+
+.chart-container#park-duration form input {
+    outline: none;
+    border: none;
+    border-bottom: 2px solid var(--main-blue);
+
+    font-size: 1rem;
+}
+
+.chart-container#park-duration .search-result {
+    margin-top: 30px;
+}
+
+.chart-container#park-duration .search-result span {
+    font-weight: 700;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.italic {
+    font-style: italic;
+}

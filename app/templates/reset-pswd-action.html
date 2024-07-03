@@ -1,0 +1,56 @@
+{% extends 'index.html' %}
+
+{% block head %}
+
+<link rel="stylesheet" href="{{url_for('static', filename='css/auth.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/auth-mobile.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/reset-pswd-action.css')}}">
+<title>Park7 - Accueil</title>
+
+{% endblock %}
+
+{% block main %}
+
+<form method="POST" action="{{url_for('reset_pswd_post', resettoken=resettoken)}}" style="min-height:500px;" id="reset-form">
+
+    <label class="title">Récupération du mot de passe</label>
+
+    <div class="critical-input">
+        <input class="form-input" id="pswd" type="password" placeholder="Nouveau mot de passe" name="pswd" required>
+        <p class="warn-create hidden" id="pswd-criteria">Le mot de passe doit contenir au moins 1 majuscule, 8 caractères, 1 chiffre
+            et 1 caractère spécial</p>
+    </div>
+
+    <div class="critical-input">
+        <input class="form-input" id="pswd-confirm" name="pswd-confirm" type="password" placeholder="Répéter le mot de passe" required>
+        <p class="warn-create hidden" id="pswd-warn">Mots de passes différents</p>
+    </div>
+
+    <div class="form-footer">
+        <a class="auth-navigate" href="{{url_for('login')}}">Annuler</a>
+        <button class="form-submit" type="submit">Valider</button>
+    </div>
+</form>
+
+<dialog class="user-dialog" id="success-dialog">
+    <form action="{{url_for('login')}}" method="get">
+        <h3>Votre mot de passe a été réinitialisé avec succès</h3>
+
+        <button type="submit">Me connecter</button>
+    </form>
+</dialog>
+
+<dialog class="user-dialog" id="failed-dialog">
+    <form method="dialog">
+        <h3>Erreur lors de la réinitialisation</h3>
+
+        <p>Une erreur est survenue lors de la réinitialisation de votre mot de passe. Veuillez réessayer ou effectuer une nouvelle demande</p>
+
+        <button type="submit">Ok</button>
+    </form>
+</dialog>
+{% endblock %}
+
+{% block script %}
+<script src="{{url_for('static', filename='js/reset-pswd-action.js')}}"></script>
+{% endblock %}

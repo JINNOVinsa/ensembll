@@ -1,0 +1,45 @@
+form {
+    width: 500px;
+}
+
+.names {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+}
+
+.logtel {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 50px;
+}
+
+.selector-wrapper {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 10px;
+    align-items: center;
+}
+
+.selector-label {
+    color: #303030;
+    font-size: 1.2rem;
+    font-weight: 400;
+
+    box-sizing: border-box;
+}
+
+
+select {
+    background: none;
+    font-size: 1.2rem;
+
+    border: none;
+    border-bottom: 3px var(--main-blue) solid;
+}
+
+.hidden {
+    visibility: hidden;
+}

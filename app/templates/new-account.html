@@ -1,0 +1,76 @@
+{% extends 'index.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/auth.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/auth-mobile.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/create-account.css')}}">
+<title>Park7 - Nouveau compte</title>
+{% endblock %}
+
+{% block main %}
+
+<form id="create-form" method="POST" action="{{url_for('create_account')}}" style="gap: 30px;">
+
+    <label class="title">Création du compte</label>
+
+    <div class="names">
+        <input type="text" class="lastname" placeholder="Nom" name="lname" required>
+        <input type="text" class="firstname" placeholder="Prénom" name="fname" required>
+    </div>
+
+    <div class="critical-input">
+        <input class="form-input" id="phonenumber" type="tel" placeholder="Télephone" name="phone">
+        <p class="warn-create hidden" id="warn-phonenumber">Ce numéro de téléphone est incorrect</p>
+    </div>
+
+    <div class="critical-input">
+        <input class="form-input" id="mail" type="email" placeholder="Adresse mail" name="mail" required>
+        <p class="warn-create hidden" id="warn-mail">Un compte existe déjà avec cette adresse mail</p>
+    </div>
+
+    <div class="critical-input">
+        <input class="form-input" id="plate" type="text" placeholder="Plaque d'immatriculation" name="plate" required>
+    </div>
+
+
+    <div class="selector-wrapper">
+        <label for="entity-select" class="selector-label">Structure:</label>
+
+        <select name="entity" id="entity-select">
+            {% for e in entities %}
+            <option value="{{e[0]}}">{{e[1]}}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="selector-wrapper">
+        <label for="profile-type-select" class="selector-label">Catégorie d'usager:</label>
+
+        <select name="profiles" id="profile-type-select">
+
+        </select>
+    </div>
+
+    <div class="critical-input">
+        <input class="form-input" id="input-pswd" type="password" placeholder="Mot de passe" name="pswd" required>
+        <p class="warn-create hidden" id="pswd-criteria">Le mot de passe doit contenir au moins 1 majuscule, 8 caractères, 1 chiffre
+            et 1 caractère spécial</p>
+    </div>
+
+    <div class="critical-input">
+        <input class="form-input" id="input-repeat-pswd" type="password" placeholder="Confirmer le mot de passe"
+            name="repeat-pswd" required>
+        <p class="warn-create hidden" id="pswd-match">Les mots de passes ne correspondent pas</p>
+    </div>
+
+    <div class="form-footer">
+        <a class="auth-navigate" href="{{url_for('login')}}">Se connecter</a>
+        <button class="form-submit">Créer un compte</button>
+    </div>
+</form>
+
+{% endblock %}
+
+{% block script %}
+<script src="{{url_for('static', filename='js/account-creator-handler.js')}}"></script>
+{% endblock %}

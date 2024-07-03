@@ -1,0 +1,262 @@
+#headline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#headline h1 {
+    width: fit-content;
+}
+
+#headline a {
+    color: var(--main-blue);
+    text-decoration: none;
+
+    padding: 10px 15px 10px 15px;
+    border-radius: 5px;
+}
+
+#headline a:hover {
+    background-color: var(--hover-grey);
+}
+
+.critical-open-btn {
+    background-color: var(--invalid-red);
+    color: white;
+    padding: 10px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.critical-open-btn:hover {
+    background-color: var(--invalid-red-dark);
+}
+
+#under-header-critical-open {
+    display: none;
+}
+
+#under-problem-btn {
+    display: none;
+}
+
+.user-dialog form {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.user-dialog .close-user-dialog {
+    width: fit-content;
+    text-align: center;
+    padding: 15px 20px 15px 20px;
+    color: var(--main-blue);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    align-self: flex-end;
+    font-weight: 700;
+}
+
+.user-dialog .close-user-dialog:hover {
+    background-color: var(--hover-grey);
+}
+
+form .element {
+    margin: 3em 0;
+}
+
+form .element-check {
+    margin: 2em 2em 0 0;
+}
+
+form .menu {
+    margin-top: 3em;
+    text-align: center;
+}
+
+.menu #acceptButton {
+    background-color: var(--valid-green);
+    padding: 10px 15px 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+}
+
+.menu #acceptButton:hover {
+    background-color: var(--valid-green-dark);
+}
+
+#rgpdDialog {
+    max-width: 600px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+}
+
+#rgpdDialog h2 {
+    color: #333;
+    margin-bottom: 16px;
+}
+
+#rgpdDialog p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #666;
+    margin-bottom: 12px;
+}
+
+#rgpdDialog a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+#rgpdDialog a:hover {
+    text-decoration: underline;
+}
+
+#rgpdDialog div {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#rgpdDialog label {
+    margin-left: 8px;
+    font-size: 14px;
+    color: #333;
+}
+
+#acceptRGPD {
+    accent-color: #007bff;
+}
+
+#rgpdDialog menu {
+    text-align: right;
+}
+
+#acceptButton {
+    padding: 10px 25px;
+    background-color: var(--valid-green);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#acceptButton:hover {
+    background-color: var(--valid-green-dark);
+}
+
+.problem-btn {
+    background-color: var(--problem-color);
+    color: white;
+    padding: 10px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.problem-btn:hover {
+    background-color: var(--problem-color-dark);
+}
+
+.user-dialog {
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#report-problem-dialog form {
+    gap: 10px !important;
+}
+
+.user-dialog form label {
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #333;
+}
+
+.user-dialog form input, .user-dialog form select, .user-dialog form textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 2px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.user-dialog form button {
+    padding: 8px 15px;
+    margin-right: 10px;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.cancel {
+    background-color: var(--invalid-red);
+}
+
+.cancel:hover {
+    background-color: var(--invalid-red-dark);
+}
+
+.valid {
+    background-color: var(--valid-green);
+}
+
+.valid:hover {
+    background-color: var(--valid-green-dark);
+}
+
+.error-matrix-container {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    text-align: center;
+    margin-top: 20px; /* Adjust as needed */
+}
+
+.error-matrix-container h2 {
+    text-align: start !important;
+}
+
+.matrix-section {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.top-left,
+.bottom-left {
+    grid-column: 1;
+}
+
+.top-right,
+.bottom-right {
+    grid-column: 2;
+}
+
+.bottom-left .value,
+.bottom-right .value {
+    font-size: 5em; /* Large text */
+    font-weight: bold; /* Bold text */
+}
+
+.bottom-left .value {
+    color: green; /* Green text */
+}
+
+.bottom-right .value {
+    color: red; /* Red text */
+}
+
+.label {
+    font-weight: bold;
+    margin-bottom: 5px; /* Space between label and value */
+}

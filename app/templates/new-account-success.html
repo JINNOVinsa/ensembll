@@ -1,0 +1,18 @@
+{% extends 'index.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/new-account-success.css')}}">
+<title>Park7 - Nouveau compte</title>
+{% endblock %}
+
+{% block main %}
+<h1>Création réussie</h1>
+
+<h2>Votre compte a été créé avec succès, vous pouvez désormais vous <a href="{{url_for('login')}}">connecter</a></h2>
+
+<h2>Votre identifiant est : <b>{{login}}</b></h2>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

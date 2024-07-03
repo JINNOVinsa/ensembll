@@ -1,0 +1,21 @@
+#export-users {
+    right: 380px !important;
+}
+
+#add-admin-btn {
+    color: red;
+
+    background: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 10px 15px 10px 15px;
+    font-size: 0.8em;
+    position: absolute;
+    right: 110px;
+    top: 12px;
+}
+
+#add-admin-btn:hover {
+    background-color: var(--hover-grey);
+}

@@ -1,0 +1,406 @@
+-- MariaDB dump 10.19  Distrib 10.11.4-MariaDB, for debian-linux-gnu (x86_64)
+--
+-- Host: localhost    Database: Ensembll
+-- ------------------------------------------------------
+-- Server version	10.11.4-MariaDB-1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `AuthTokens`
+--
+
+DROP TABLE IF EXISTS `AuthTokens`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `AuthTokens` (
+  `token` varchar(32) NOT NULL,
+  `id` varchar(150) DEFAULT NULL,
+  PRIMARY KEY (`token`),
+  KEY `id` (`id`),
+  CONSTRAINT `AuthTokens_ibfk_1` FOREIGN KEY (`id`) REFERENCES `Users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `AuthTokens`
+--
+
+LOCK TABLES `AuthTokens` WRITE;
+/*!40000 ALTER TABLE `AuthTokens` DISABLE KEYS */;
+/*!40000 ALTER TABLE `AuthTokens` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Bookings`
+--
+
+DROP TABLE IF EXISTS `Bookings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Bookings` (
+  `uuid` varchar(65) NOT NULL DEFAULT 'uuid()',
+  `usrId` varchar(150) NOT NULL,
+  `plate` varchar(10) NOT NULL,
+  `present` tinyint(1) DEFAULT 0,
+  `startTS` datetime NOT NULL,
+  `endTS` datetime NOT NULL,
+  `repeatInterval` varchar(7) NOT NULL,
+  `customInterval` varchar(7) DEFAULT NULL,
+  `customAmount` int(11) DEFAULT NULL,
+  `onMonday` tinyint(1) DEFAULT 0,
+  `onTuesday` tinyint(1) DEFAULT 0,
+  `onWednesday` tinyint(1) DEFAULT 0,
+  `onThursday` tinyint(1) DEFAULT 0,
+  `onFriday` tinyint(1) DEFAULT 0,
+  `onSaturday` tinyint(1) DEFAULT 0,
+  `onSunday` tinyint(1) DEFAULT 0,
+  `ending` datetime DEFAULT NULL,
+  `associedCriticity` int(11) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`uuid`),
+  KEY `usrId` (`usrId`,`plate`),
+  CONSTRAINT `Bookings_ibfk_1` FOREIGN KEY (`usrId`, `plate`) REFERENCES `Plates` (`usrId`, `plate`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Bookings`
+--
+
+LOCK TABLES `Bookings` WRITE;
+/*!40000 ALTER TABLE `Bookings` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Bookings` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `BookingsApiPeriods`
+--
+
+DROP TABLE IF EXISTS `BookingsApiPeriods`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `BookingsApiPeriods` (
+  `id` varchar(26) NOT NULL,
+  `bookingId` varchar(65) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `bookingId` (`bookingId`),
+  CONSTRAINT `BookingsApiPeriods_ibfk_1` FOREIGN KEY (`bookingId`) REFERENCES `Bookings` (`uuid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `BookingsApiPeriods`
+--
+
+LOCK TABLES `BookingsApiPeriods` WRITE;
+/*!40000 ALTER TABLE `BookingsApiPeriods` DISABLE KEYS */;
+/*!40000 ALTER TABLE `BookingsApiPeriods` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `CriticityTables`
+--
+
+DROP TABLE IF EXISTS `CriticityTables`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `CriticityTables` (
+  `id` varchar(36) NOT NULL DEFAULT uuid(),
+  `profileId` varchar(36) DEFAULT NULL,
+  `startTS` time NOT NULL,
+  `endTS` time NOT NULL,
+  `criticityLevel` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `profileId` (`profileId`),
+  CONSTRAINT `CriticityTables_ibfk_1` FOREIGN KEY (`profileId`) REFERENCES `Profiles` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `CriticityTables`
+--
+
+LOCK TABLES `CriticityTables` WRITE;
+/*!40000 ALTER TABLE `CriticityTables` DISABLE KEYS */;
+/*!40000 ALTER TABLE `CriticityTables` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Entity`
+--
+
+DROP TABLE IF EXISTS `Entity`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Entity` (
+  `id` varchar(150) NOT NULL,
+  `nbPlacesAllocated` int(11) DEFAULT NULL,
+  `nbFreePlaces` int(11) DEFAULT NULL,
+  `eName` varchar(150) DEFAULT 'Structure',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Entity`
+--
+
+LOCK TABLES `Entity` WRITE;
+/*!40000 ALTER TABLE `Entity` DISABLE KEYS */;
+INSERT INTO `Entity` VALUES
+('id1',15,100,'ICL'),
+('id2',15,100,'Jean23'),
+('id3',15,100,'FMMS'),
+('id4',15,100,'EHPAD_SFDS');
+/*!40000 ALTER TABLE `Entity` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ExceptionalOpen`
+--
+
+DROP TABLE IF EXISTS `ExceptionalOpen`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ExceptionalOpen` (
+  `id` varchar(36) NOT NULL DEFAULT uuid(),
+  `pId` varchar(150) NOT NULL,
+  `openTS` datetime NOT NULL,
+  `closeTS` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pId` (`pId`),
+  CONSTRAINT `ExceptionalOpen_ibfk_1` FOREIGN KEY (`pId`) REFERENCES `Parkings` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ExceptionalOpen`
+--
+
+LOCK TABLES `ExceptionalOpen` WRITE;
+/*!40000 ALTER TABLE `ExceptionalOpen` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ExceptionalOpen` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `FlowAlerts`
+--
+
+DROP TABLE IF EXISTS `FlowAlerts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `FlowAlerts` (
+  `id` varchar(65) NOT NULL,
+  `earlier` tinyint(1) NOT NULL DEFAULT 0,
+  `later` tinyint(1) NOT NULL DEFAULT 0,
+  `plate` varchar(10) NOT NULL,
+  `firstname` varchar(30) DEFAULT NULL,
+  `lastname` varchar(30) DEFAULT NULL,
+  `start` datetime DEFAULT NULL,
+  `end` datetime DEFAULT NULL,
+  `created` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `FlowAlerts`
+--
+
+LOCK TABLES `FlowAlerts` WRITE;
+/*!40000 ALTER TABLE `FlowAlerts` DISABLE KEYS */;
+/*!40000 ALTER TABLE `FlowAlerts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Parkings`
+--
+
+DROP TABLE IF EXISTS `Parkings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Parkings` (
+  `id` varchar(150) NOT NULL,
+  `parkingName` varchar(150) NOT NULL,
+  `capacity` int(11) NOT NULL,
+  `availableSpaces` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Parkings`
+--
+
+LOCK TABLES `Parkings` WRITE;
+/*!40000 ALTER TABLE `Parkings` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Parkings` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Plates`
+--
+
+DROP TABLE IF EXISTS `Plates`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Plates` (
+  `usrId` varchar(150) NOT NULL,
+  `plate` varchar(10) NOT NULL,
+  PRIMARY KEY (`usrId`,`plate`),
+  CONSTRAINT `Plates_ibfk_1` FOREIGN KEY (`usrId`) REFERENCES `Users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Plates`
+--
+
+LOCK TABLES `Plates` WRITE;
+/*!40000 ALTER TABLE `Plates` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Plates` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Profiles`
+--
+
+DROP TABLE IF EXISTS `Profiles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Profiles` (
+  `id` varchar(36) NOT NULL DEFAULT uuid(),
+  `profileName` varchar(255) NOT NULL DEFAULT 'Aucun profil',
+  `criticity` int(11) NOT NULL DEFAULT 1,
+  `entityId` varchar(150) NOT NULL,
+  PRIMARY KEY (`id`,`profileName`),
+  KEY `entityId` (`entityId`),
+  CONSTRAINT `Profiles_ibfk_1` FOREIGN KEY (`entityId`) REFERENCES `Entity` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Profiles`
+--
+
+LOCK TABLES `Profiles` WRITE;
+/*!40000 ALTER TABLE `Profiles` DISABLE KEYS */;
+INSERT INTO `Profiles` VALUES
+('0edf5277-b997-11ed-898a-c8ddfc58c3ca','Liberal externe (médecin, kiné,...)',5,'id1'),
+('0edf7faa-b997-11ed-898a-c8ddfc58c3ca','Salarié, enseignant, vacataire',4,'id1'),
+('0edfabb3-b997-11ed-898a-c8ddfc58c3ca','Intervenant extérieur',3,'id1'),
+('0edfd39f-b997-11ed-898a-c8ddfc58c3ca','Client, visiteur',2,'id1'),
+('2250f0fe-f269-11ed-8a50-cae7270dccd6','Habitant, étudiant',1,'id1'),
+('43fb1cf5-dadf-11ed-8893-c5d1c877f97d','Aucun Profil',0,'id1'),
+('43fb1cf5-dadf-11ed-8893-c5d1c877f97f','Aucun Profil',0,'id3'),
+('43fb1cf5-dadf-11ed-8893-c5d1c877f97g','Aucun Profil',0,'id4'),
+('88e91153-f335-11ed-88e2-c6d5d9bf31b6','Aucun Profil',0,'id2');
+/*!40000 ALTER TABLE `Profiles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ResetPswd`
+--
+
+DROP TABLE IF EXISTS `ResetPswd`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ResetPswd` (
+  `usrToken` varchar(64) NOT NULL,
+  `usrId` varchar(150) NOT NULL,
+  `created` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`usrToken`,`usrId`),
+  KEY `usrId` (`usrId`),
+  CONSTRAINT `ResetPswd_ibfk_1` FOREIGN KEY (`usrId`) REFERENCES `Users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ResetPswd`
+--
+
+LOCK TABLES `ResetPswd` WRITE;
+/*!40000 ALTER TABLE `ResetPswd` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ResetPswd` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Users`
+--
+
+DROP TABLE IF EXISTS `Users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Users` (
+  `id` varchar(150) NOT NULL,
+  `firstName` varchar(30) NOT NULL,
+  `lastName` varchar(30) NOT NULL,
+  `mail` varchar(50) NOT NULL,
+  `usrType` varchar(36) NOT NULL,
+  `hierarchicalLevel` int(11) DEFAULT 0,
+  `entityId` varchar(150) DEFAULT NULL,
+  `created` datetime NOT NULL DEFAULT current_timestamp(),
+  `approved` tinyint(1) DEFAULT 0,
+  `phoneNumber` varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `entityId` (`entityId`),
+  KEY `usrType` (`usrType`),
+  CONSTRAINT `Users_ibfk_1` FOREIGN KEY (`entityId`) REFERENCES `Entity` (`id`),
+  CONSTRAINT `Users_ibfk_2` FOREIGN KEY (`usrType`) REFERENCES `Profiles` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Users`
+--
+
+LOCK TABLES `Users` WRITE;
+/*!40000 ALTER TABLE `Users` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `UsersCredentials`
+--
+
+DROP TABLE IF EXISTS `UsersCredentials`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `UsersCredentials` (
+  `id` varchar(150) NOT NULL,
+  `usrLogin` varchar(150) NOT NULL,
+  `pswdhash` varchar(64) NOT NULL,
+  `salt` varchar(15) NOT NULL,
+  PRIMARY KEY (`id`,`usrLogin`),
+  CONSTRAINT `UsersCredentials_ibfk_1` FOREIGN KEY (`id`) REFERENCES `Users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `UsersCredentials`
+--
+
+LOCK TABLES `UsersCredentials` WRITE;
+/*!40000 ALTER TABLE `UsersCredentials` DISABLE KEYS */;
+/*!40000 ALTER TABLE `UsersCredentials` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2023-08-03 10:29:06
