@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ./app
+    container_name: app_container
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./app:/app
+    environment:
+      - FLASK_ENV=development
+
+  flow:
+    build:
+      context: ./flow
+    container_name: flow_container
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./flow:/app
+    environment:
+      - FLASK_ENV=development
