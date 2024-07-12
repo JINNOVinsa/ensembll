@@ -1,39 +1,37 @@
 {% extends 'admin-pannel.html' %}
 
 {% block additionnalHead %}
-<link rel="stylesheet" href="{{url_for('static', filename='css/admin-pannel.css')}}">
-<link rel="stylesheet" href="{{url_for('static', filename='css/admin-pannel-confirm.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/admin-pannel-users.css')}}">
 {% endblock %}
 
 {% block tableTitle %}
-{% if usercount > 1 %}
-<label>{{usercount}} Usagers à valider</label>
-{% else %}
-<label>{{usercount}} Usager à valider</label>
-{% endif %}
+<label>{{usercount}} Usagers</label>
+
+<button id="export-users">Exporter les données utilisateurs</button>
+<button class="add-btn" id="add-user-btn">Ajouter</button>
 {% endblock %}
 
 {% block tableHeader %}
 <label>Nom</label>
 <label>Prénom</label>
-<label>Criticité</label>
 <label>Profil</label>
-<label>Consentement RGPD</label>
+<label>Établissement</label>
+<label>Niveau hiérarchique</label>
+<label>Status</label>
 {% endblock %}
 
 {% block tableBody %}
 {% if usercount > 0 %}
 
-
 {% else %}
-<label>Aucun utilisateur à valider</label>
+<label>Aucun utilisateur enregistré</label>
 {% endif %}
+
 {% endblock %}
 
 {% block underTable %}
-
 <dialog class="user-dialog expand" id="expand-user-dialog">
-    <form action="{{url_for('adminPannelConfirm')}}" method="dialog">
+    <form method="dialog">
         <h2>Profil renseigné par <span id="user-name"></span></h2>
 
         <div class="content">
@@ -56,7 +54,7 @@
 </dialog>
 
 <dialog class="user-dialog expand" id="edit-user-dialog">
-    <form action="{{url_for('editUser')}}" method="dialog">
+    <form action="{{url_for('admin.editUser')}}" method="dialog">
         <h2>Profil renseigné par <span id="user-name"></span></h2>
 
         <div class="content">
@@ -97,7 +95,7 @@
 </dialog>
 
 <dialog class="user-dialog dialog-user-result" id="edit-user-success-dialog">
-    <form action="{{url_for('adminPannelConfirm')}}" method="get">
+    <form action="{{url_for('admin.adminPannelUsers')}}" method="get">
         <h3>Modifications effectuées avec succès</h3>
 
         <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
@@ -113,8 +111,9 @@
     </form>
 </dialog>
 
+
 <dialog class="user-dialog dialog-user-result" id="delete-user-success-dialog">
-    <form action="{{url_for('adminPannelConfirm')}}" method="get">
+    <form action="{{url_for('admin.adminPannelUsers')}}" method="get">
         <h3>Suppression effectué avec succès</h3>
 
         <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
@@ -129,37 +128,81 @@
     </form>
 </dialog>
 
-<dialog class="user-dialog" id="confirm-user-ask-dialog">
-    <form method="dialog">
-        <p>Êtes-vous sûr de vouloir confirmer le profil de <span id="confirm-user-text"></span> ?</p>
-        
-        <div id="btns">
-            <button class="close-user-dialog" id="cancel-ask-dialog" type="reset">Annuler</button>
-            <button class="close-user-dialog danger" id="submit-ask-dialog" type="submit">Confirmer</button>
+<dialog class="user-dialog expand" id="add-user-dialog">
+    <form action="{{url_for('admin.adminSubmitAccount')}}" method="dialog">
+        <h2>Création d'un nouvel utilisateur</h2>
+
+        <div class="content">
+            <label for="lname" class="title">Nom</label>
+            <input type="text" name="lname" id="lastname" placeholder="Nom de l'utilisateur" required>
+
+            <label for="fname" class="title">Prénom</label>
+            <input type="text" name="fname" id="firstname" placeholder="Prénom de l'utilisateur" required>
+
+            <label for="pswd" class="title">Mot de passe</label>
+            <input type="password" name="pswd" id="pswd" placeholder="Mot de passe unique (8 caractères, 1 chiffre et 1 caractère spécial)" required>
+
+            <label for="profiles" class="title">Type de profil</label>
+            <select name="profiles" id="profile">
+                {% for p in profilesNames %}
+                <option>{{p}}</option>
+                {% endfor %}
+            </select>
+            
+            <label for="mail" class="title">Adresse mail</label>
+            <input type="email" name="mail" id="mail" placeholder="Adresse mail" required>
+            
+            <label for="phone" class="title">Numéro de téléphone</label>
+            <input type="text" name="phone" id="tel" placeholder="Numéro de téléphone">
+            
+            <label class="title">Plaques d'immatriculation</label>
+            <input type="text" name="plate" id="plate" placeholder="Plaque d'immatriculation" required>
+        </div>
+
+        <div class="confirm-zone">
+            <input type="checkbox" name="valid-cb" id="add-input-valid-checkbox">
+            <label for="add-input-valid-checkbox">Je confirme la création de l'utilisateur</label>
+        </div>
+
+        <div class="submit-zone">
+            <button class="close-user-dialog" type="reset" value="cancel">Annuler</button>
+            <button class="close-user-dialog danger" id="submit-add-user" type="submit" disabled="disabled">Ajouter</button>
         </div>
     </form>
 </dialog>
 
-<dialog class="user-dialog" id="confirm-success-dialog">
-    <form action="{{url_for('adminPannelConfirm')}}" method="get">
-        <h3>Confirmation réussie</h3>
-        <p>Utilisateur <span id="confirm-user-text"></span> confirmé avec succès</p>
+<dialog class="user-dialog dialog-user-result" id="add-user-full-success-dialog">
+    <form action="{{url_for('admin.adminPannelUsers')}}" method="get">
+        <h3>Création de l'utilisateur effectuée avec succès</h3>
+
         <button class="close-user-dialog" type="submit">Ok</button>
     </form>
 </dialog>
 
-<dialog class="user-dialog" id="confirm-failed-dialog">
+<dialog class="user-dialog dialog-user-result" id="add-user-failed-dialog">
     <form method="dialog">
-        <h3>Echec de la confirmation</h3>
-        <p>La confirmation de l'utilisateur <span id="confirm-user-text"></span> a échouée pour une raison inconnue</p>
-        <button class="close-user-dialog">Ok</button>
+        <h3>Le compte utilisateur n'a pas pu être créé</h3>
+
+        <h4>La création a échouée pour la raison suivante: <span id="failed-reason"></span></h4>
+
+        <button class="close-user-dialog" type="submit">Ok</button>
     </form>
 </dialog>
 
+<dialog class="user-dialog dialog-user-result" id="add-user-failed-unknown-dialog">
+    <form method="dialog">
+        <h3>Le compte utilisateur n'a pas pu être créé</h3>
+
+        <h4>La création a échouée pour une raison inconnue</h4>
+
+        <button class="close-user-dialog" type="submit">Ok</button>
+    </form>
+</dialog>
 {% endblock %}
 
 {% block additionnalScript %}
 <script src="{{url_for('static', filename='js/admin-pannel-general.js')}}"></script>
-<script src="{{url_for('static', filename='js/admin-pannel-confirm.js')}}"></script>
+<script src="{{url_for('static', filename='js/admin-pannel-users.js')}}"></script>
 <script src="{{url_for('static', filename='js/admin-pannel-search-users.js')}}"></script>
+<script src="{{url_for('static', filename='js/admin-pannel-add-user.js')}}"></script>
 {% endblock %}

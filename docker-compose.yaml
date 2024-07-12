@@ -4,21 +4,47 @@ services:
   app:
     build:
       context: ./app
+      dockerfile: Dockerfile
     container_name: app_container
     ports:
       - "5000:5000"
     volumes:
       - ./app:/app
-    environment:
-      - FLASK_ENV=development
+    env_file:
+      - app/.env
+    depends_on:
+      - mysql-app
+      - mysql-flow
 
   flow:
     build:
       context: ./flow
+      dockerfile: Dockerfile
     container_name: flow_container
     ports:
       - "5001:5001"
     volumes:
       - ./flow:/app
+    env_file:
+      - flow/.env
+    depends_on:
+      - mysql-app
+      - mysql-flow
+
+  mysql-app:
+    image: mysql:5.7
+    container_name: mysql-app
     environment:
-      - FLASK_ENV=development
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: app
+    ports:
+      - "3306:3306"
+
+  mysql-flow:
+    image: mysql:5.7
+    container_name: mysql-flow
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: flow
+    ports:
+      - "3307:3306"
