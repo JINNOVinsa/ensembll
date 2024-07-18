@@ -29,7 +29,7 @@
 
 {% block underTable %}
 <dialog class="user-dialog" id="edit-spots-dialog">
-    <form action="{{url_for('editAllocation')}}" method="post">
+    <form action="{{url_for('super_admin.editAllocation')}}" method="post">
         <h3>Modifier la répartition pour <span id="spots-entity-name"></span></h3>
 
         <div>
@@ -49,7 +49,7 @@
 </dialog>
 
 <dialog class="user-dialog" id="edit-spots-success">
-    <form action="{{url_for('superAdminPannelAllocation')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelAllocation')}}" method="get">
         <h3>Modifications effectuées avec succès</h3>
 
         <button type="submit">Ok</button>
@@ -65,7 +65,7 @@
 </dialog>
 
 <dialog class="user-dialog" id="addEntity">
-    <form action="{{url_for('superAdminAddEntity')}}" method="post">
+    <form action="{{url_for('super_admin.superAdminAddEntity')}}" method="post">
         <h3>Ajouter une structure</h3>
 
         <div>
@@ -91,7 +91,7 @@
 </dialog>
 
 <dialog class="user-dialog" id="addEntitySuccess">
-    <form action="{{url_for('superAdminPannelAllocation')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelAllocation')}}" method="get">
         <h3>Structure ajoutée avec succès</h3>
 
         <button type="submit">Ok</button>
@@ -107,7 +107,7 @@
 </dialog>
 
 <dialog class="user-dialog" id="deleteEntity">
-    <form action="{{url_for('superAdminDeleteEntity')}}" method="post">
+    <form action="{{url_for('super_admin.superAdminDeleteEntity')}}" method="post">
         <h3>Supprimer une structure</h3>
         <input type="hidden" name="id" id="entity-id">
         <div>

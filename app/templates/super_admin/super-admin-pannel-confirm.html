@@ -32,7 +32,7 @@
 
 {% block underTable %}
 <dialog class="user-dialog expand" id="expand-user-dialog">
-    <form action="{{url_for('adminPannelConfirm')}}" method="dialog">
+    <form action="{{url_for('admin.adminPannelConfirm')}}" method="dialog">
         <h2>Profil renseigné par <span id="user-name"></span></h2>
 
         <div class="content">
@@ -57,7 +57,7 @@
 </dialog>
 
 <dialog class="user-dialog expand" id="edit-user-dialog">
-    <form action="{{url_for('superEditUser')}}" method="dialog">
+    <form action="{{url_for('super_admin.superEditUser')}}" method="dialog">
         <h2>Profil renseigné par <span id="user-name"></span></h2>
 
         <div class="content">
@@ -102,7 +102,7 @@
 </dialog>
 
 <dialog class="user-dialog dialog-user-result" id="edit-user-success-dialog">
-    <form action="{{url_for('superAdminPannelConfirm')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelConfirm')}}" method="get">
         <h3>Modifications effectuées avec succès</h3>
 
         <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
@@ -119,7 +119,7 @@
 </dialog>
 
 <dialog class="user-dialog dialog-user-result" id="delete-user-success-dialog">
-    <form action="{{url_for('superAdminPannelConfirm')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelConfirm')}}" method="get">
         <h3>Suppression effectué avec succès</h3>
 
         <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
@@ -146,7 +146,7 @@
 </dialog>
 
 <dialog class="user-dialog" id="confirm-success-dialog">
-    <form action="{{url_for('superAdminPannelConfirm')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelConfirm')}}" method="get">
         <h3>Confirmation réussie</h3>
         <p>Utilisateur <span id="confirm-user-text"></span> confirmé avec succès</p>
         <button class="close-user-dialog" type="submit">Ok</button>

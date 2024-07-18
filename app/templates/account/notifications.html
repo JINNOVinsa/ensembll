@@ -116,9 +116,9 @@
         {% endif %}
 
         {% if adminHeadline == "Administration" %}
-        <h3><a href="{{url_for(adminRoute)}}">Panneau d'{{adminHeadline}}</a></h3>
+        <h3><a href="{{url_for('super_admin.superAdminPannel')}}">Panneau d'{{adminHeadline}}</a></h3>
         {% else %}
-        <h3><a href="{{url_for(adminRoute)}}">Panneau de {{adminHeadline}}</a></h3>
+        <h3><a href="{{url_for('admin.adminPannel')}}">Panneau de {{adminHeadline}}</a></h3>
         {% endif %}
 
 </div>

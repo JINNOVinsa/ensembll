@@ -99,7 +99,7 @@
                 src="{{url_for('static', filename='assets/close.png')}}" alt="Close"></button>
     </div>
 
-    <form class="book" id="edit-booking" action="{{url_for('superAddUserBooking')}}" method="dialog">
+    <form class="book" id="edit-booking" action="{{url_for('super_admin.superAddUserBooking')}}" method="dialog">
 
         <div class="row" id="infos">
             <div class="cell">
@@ -221,7 +221,7 @@
 </dialog>
 
 <dialog class="user-dialog" id="edit-booking-success">
-    <form action="{{url_for('superAdminPannelBookings')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelBookings')}}" method="get">
         <h3>La modification du stationnement a bien été prise en compte</h3>
 
         <button type="submit">Ok</button>
@@ -229,7 +229,7 @@
 </dialog>
 
 <dialog class="user-dialog" id="edit-booking-failed">
-    <form action="{{url_for('superAdminPannelBookings')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelBookings')}}" method="get">
         <h3>La modification du stationnement a échouée pour une raison inconnue. Veuillez réessayer</h3>
 
         <button type="submit">Ok</button>
@@ -245,7 +245,7 @@
 </dialog>
 
 <dialog class="user-dialog" id="ask-delete">
-    <form action="{{url_for('superDeleteUserBooking')}}" method="post">
+    <form action="{{url_for('super_admin.superDeleteUserBooking')}}" method="post">
         <h3>Voulez-vous vraiment supprimer ce stationnement ?</h3>
 
         <div class="submit-zone">
@@ -256,7 +256,7 @@
 </dialog>
 
 <dialog class="user-dialog" id="delete-booking-success">
-    <form action="{{url_for('superAdminPannelBookings')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelBookings')}}" method="get">
         <h3>La suppression du stationnement a bien été prise en compte</h3>
 
         <button type="submit">Ok</button>
@@ -264,7 +264,7 @@
 </dialog>
 
 <dialog class="user-dialog" id="delete-booking-failed">
-    <form action="{{url_for('superAdminPannelBookings')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelBookings')}}" method="get">
         <h3>La suppression du stationnement a échouée pour une raison inconnue. Veuillez réessayer</h3>
 
         <button type="submit">Ok</button>
@@ -279,7 +279,7 @@
                 src="{{url_for('static', filename='assets/close.png')}}" alt="Close"></button>
     </div>
 
-    <form class="book" id="add-booking" action="{{url_for('superAddUserBooking')}}" method="dialog">
+    <form class="book" id="add-booking" action="{{url_for('super_admin.superAddUserBooking')}}" method="dialog">
 
         <div class="row head" id="user-row">
             <div class="cell">

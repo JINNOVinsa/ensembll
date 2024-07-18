@@ -57,7 +57,7 @@
 </dialog>
 
 <dialog class="user-dialog expand" id="edit-user-dialog">
-    <form action="{{url_for('superEditUser')}}" method="dialog">
+    <form action="{{url_for('super_admin.superEditUser')}}" method="dialog">
         <h2>Profil renseigné par <span id="user-name"></span></h2>
 
         <div class="content">
@@ -102,7 +102,7 @@
 </dialog>
 
 <dialog class="user-dialog dialog-user-result" id="edit-user-success-dialog">
-    <form action="{{url_for('superAdminPannelUsers')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelUsers')}}" method="get">
         <h3>Modifications effectuées avec succès</h3>
 
         <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
@@ -120,7 +120,7 @@
 
 
 <dialog class="user-dialog dialog-user-result" id="delete-user-success-dialog">
-    <form action="{{url_for('superAdminPannelUsers')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelUsers')}}" method="get">
         <h3>Suppression effectué avec succès</h3>
 
         <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
@@ -137,7 +137,7 @@
 </dialog>
 
 <dialog class="user-dialog expand" id="add-user-dialog">
-    <form action="{{url_for('superAdminSubmitAccount')}}" method="dialog">
+    <form action="{{url_for('super_admin.superAdminSubmitAccount')}}" method="dialog">
         <h2>Création d'un nouvel utilisateur</h2>
 
         <div class="content">
@@ -185,7 +185,7 @@
 </dialog>
 
 <dialog class="user-dialog dialog-user-result" id="add-user-full-success-dialog">
-    <form action="{{url_for('superAdminPannelUsers')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelUsers')}}" method="get">
         <h3>Création de l'utilisateur effectuée avec succès</h3>
 
         <button class="close-user-dialog" type="submit">Ok</button>
@@ -203,7 +203,7 @@
 </dialog>
 
 <dialog class="user-dialog dialog-user-result" id="add-user-failed-unknown-dialog">
-    <form action="{{url_for('superAdminPannelUsers')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelUsers')}}" method="get">
         <h3>Le compte utilisateur n'a pas pu être créé</h3>
 
         <h4>La création a échouée pour une raison inconnue</h4>
@@ -213,7 +213,7 @@
 </dialog>
 
 <dialog class="user-dialog expand" id="add-admin-dialog">
-    <form action="{{url_for('superAdminSubmitAdminAccount')}}" method="dialog">
+    <form action="{{url_for('super_admin.superAdminSubmitAdminAccount')}}" method="dialog">
         <h2>Création d'un compte de direction</h2>
 
         <div class="content">
@@ -262,7 +262,7 @@
 </dialog>
 
 <dialog class="user-dialog dialog-user-result" id="add-admin-full-success-dialog">
-    <form action="{{url_for('superAdminPannelUsers')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelUsers')}}" method="get">
         <h3>Création du compte de direction effectuée avec succès</h3>
 
         <button class="close-user-dialog" type="submit">Ok</button>
@@ -280,7 +280,7 @@
 </dialog>
 
 <dialog class="user-dialog dialog-user-result" id="add-admin-failed-unknown-dialog">
-    <form action="{{url_for('superAdminPannelUsers')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelUsers')}}" method="get">
         <h3>Le compte de direction n'a pas pu être créé</h3>
 
         <h4>La création a échouée pour une raison inconnue</h4>

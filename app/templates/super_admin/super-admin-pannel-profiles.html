@@ -42,7 +42,7 @@
 {% block underTable %}
 
 <dialog class="user-dialog" id="add-profile-dialog">
-    <form id="add-profile-form" action="{{url_for('addProfile')}}" method="POST">
+    <form id="add-profile-form" action="{{url_for('admin.addProfile')}}" method="POST">
         <h3>Ajouter un nouveau profil d'utilisateur</h3>
 
         <div class="content">
@@ -70,7 +70,7 @@
 </dialog>
 
 <dialog class="user-dialog" id="add-profile-success-dialog">
-    <form action="{{url_for('superAdminPannelProfiles')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelProfiles')}}" method="get">
         <h3>Profil ajouté avec success</h3>
 
         <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
@@ -102,7 +102,7 @@
 </dialog>
 
 <dialog class="user-dialog" id="add-time-slot-dialog">
-    <form action="{{url_for('superAdminPannelAddTimeSlot')}}" method="POST" id="add-time-slot-form">
+    <form action="{{url_for('super_admin.superAdminPannelAddTimeSlot')}}" method="POST" id="add-time-slot-form">
         <h3>Nouvelle plage horaire</h3>
 
         <div id="time-slots-inputs">
@@ -129,7 +129,7 @@
 </dialog>
 
 <dialog class="user-dialog" id="confirm-delete-time-slot-dialog">
-    <form action="{{url_for('superAdminPannelDeleteTimeSlot')}}" method="POST" id="delete-time-slot-form">
+    <form action="{{url_for('super_admin.superAdminPannelDeleteTimeSlot')}}" method="POST" id="delete-time-slot-form">
         <h3>Êtes-vous sûr de vouloir supprimer cette plage horaire ?</h3>
 
         <div class="submit-zone">
@@ -173,7 +173,7 @@
 </dialog>
 
 <dialog class="user-dialog" id="confirm-edit-profile-dialog">
-    <form id="confirm-edit-profile-form" action="{{url_for('editProfile')}}" method="dialog">
+    <form id="confirm-edit-profile-form" action="{{url_for('admin.editProfile')}}" method="dialog">
         <h3>Résumé de vos changements:</h3>
 
         <label>Nom du profil: <span id="new-name-profile"></span></label>
@@ -188,7 +188,7 @@
 </dialog>
 
 <dialog class="user-dialog dialog-profile-result" id="edit-profile-success-dialog">
-    <form action="{{url_for('superAdminPannelProfiles')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelProfiles')}}" method="get">
         <h3>Modifications effectuées avec succès</h3>
 
         <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
@@ -197,7 +197,7 @@
 
 
 <dialog class="user-dialog dialog-profile-result" id="edit-profile-failed-dialog">
-    <form action="{{url_for('superAdminPannelProfiles')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelProfiles')}}" method="get">
         <h3>Echec de la modification du profil pour une raison inconnue</h3>
 
         <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
@@ -205,7 +205,7 @@
 </dialog>
 
 <dialog class="user-dialog" id="delete-profile-dialog">
-    <form id="delete-profile-form" action="{{url_for('deleteProfile')}}" method="dialog">
+    <form id="delete-profile-form" action="{{url_for('admin.deleteProfile')}}" method="dialog">
         <h3>Supprimer le profil: <span id="profile-headline"></span></h3>
 
         <div class="confirm-zone">
@@ -222,7 +222,7 @@
 </dialog>
 
 <dialog class="user-dialog dialog-profile-result" id="delete-profile-success-dialog">
-    <form action="{{url_for('superAdminPannelProfiles')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelProfiles')}}" method="get">
         <h3>Suppression effectuée avec succès</h3>
 
         <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
@@ -231,7 +231,7 @@
 
 
 <dialog class="user-dialog dialog-profile-result" id="delete-profile-failed-dialog">
-    <form action="{{url_for('superAdminPannelProfiles')}}" method="get">
+    <form action="{{url_for('super_admin.superAdminPannelProfiles')}}" method="get">
         <h3>Echec de la suppression du profil pour une raison inconnue</h3>
 
         <button class="dialog close-user-dialog cancel" type="submit">Ok</button>
