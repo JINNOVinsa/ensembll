@@ -52,8 +52,8 @@ app.jinja_loader = RecursiveFileSystemLoader('templates')
 
 
 load_dotenv()
-db = DbInputStream('127.0.0.1', int(getenv("DB_PORT")), getenv("DB_ID"), getenv("DB_PSWD"))
-db_flow = DbInputStream('127.0.0.1', int(getenv("DB_PORT")), getenv("DB_FLOW_ID"), getenv("DB_FLOW_PSWD"), database=getenv("DB_FLOW_NAME"))
+db = DbInputStream('mysql-app', int(getenv("DB_PORT")), getenv("DB_ID"), getenv("DB_PSWD"))
+db_flow = DbInputStream('mysql-flow', int(getenv("DB_PORT")), getenv("DB_FLOW_ID"), getenv("DB_FLOW_PSWD"), database=getenv("DB_FLOW_NAME"))
 
 mail_host = getenv("API_MAIL_LOG")
 mail_pswd = getenv("API_MAIL_PSWD")
@@ -497,7 +497,6 @@ def submitAccount():
     # Envoi de la requête POST
     r = api.post_api(apiUrls.POST_USER, payload=payload)
     
-    
     if r.status_code == 200:
         db.write(db_requests.INSERT_USER.format(
             id=r.json()['_id'],
@@ -517,13 +516,9 @@ def submitAccount():
 
         return make_response(render_template('new-account-success.html', connected=False, login=login), 201)
     else:
-        logging.basicConfig(level=logging.DEBUG)
-        try:
-            response_json = r.json()
-            logging.debug(f"Response JSON: {json.dumps(response_json, indent=2)}")
-        except ValueError:
-            logging.debug(f"Response Text: {r.text}")
-        return make_response("API ERROR USER", 400)
+        response_json = r.json()
+        description = response_json.get("description", "No description available")
+        return make_response(f"API ERROR, {description}", 400)
   
 @app.route('/profiles', methods=['GET'])
 def getProfiles():

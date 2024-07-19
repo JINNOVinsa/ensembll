@@ -202,8 +202,8 @@ class APIinterface:
         print("[INFO] Write tokens OK")
 
 load_dotenv('../app/.env')
-db_flow = DbInputStream('127.0.0.1', int(getenv("DB_PORT")), getenv("DB_FLOW_WRITER_ID"), getenv("DB_FLOW_WRITER_PSWD"), database=getenv("DB_FLOW_NAME"))
-db = DbInputStream('127.0.0.1', int(getenv("DB_PORT")), getenv("DB_ID"), getenv("DB_PSWD"), database='Ensembll')
+db_flow = DbInputStream('mysql-flow', int(getenv("DB_PORT2")), getenv("DB_FLOW_WRITER_ID"), getenv("DB_FLOW_WRITER_PSWD"), database=getenv("DB_FLOW_NAME"))
+db = DbInputStream('mysql-app', int(getenv("DB_PORT")), getenv("DB_ID"), getenv("DB_PSWD"), database='Ensembll')
 api_log = getenv("API_PARKKI_LOG")
 api_token = getenv("API_PARKKI_TOKEN")
 api = APIinterface(api_log, api_token)

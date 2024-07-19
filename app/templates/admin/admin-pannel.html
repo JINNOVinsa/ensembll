@@ -1,8 +1,8 @@
 {% extends 'index.html' %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{url_for('static', filename='css/admin-pannel.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/admin-pannel-responsive.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/admin/admin-pannel.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/admin/admin-pannel-responsive.css')}}">
     {% block additionnalHead %} {% endblock %}
     <title>Park7 - Panneau de direction</title>
 {% endblock %}
@@ -93,7 +93,7 @@
 {% endblock %}
 
 {% block script %}
-<script src="{{url_for('static', filename='js/admin-utils.js')}}"></script>
+<script src="{{url_for('static', filename='js/admin/admin-utils.js')}}"></script>
 {% block additionnalScript %}
 {% endblock %}
 {% endblock %}

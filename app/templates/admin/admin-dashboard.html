@@ -3,12 +3,12 @@
 {% block head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<link rel="stylesheet" href="{{url_for('static', filename='css/user-dashboard.css')}}">
-<link rel="stylesheet" href="{{url_for('static', filename='css/user-dashboard-responsive.css')}}">
-<link rel="stylesheet" href="{{url_for('static', filename='css/admin-dashboard.css')}}">
-<link rel="stylesheet" href="{{url_for('static', filename='css/admin-dashboard-responsive.css')}}">
-<link rel="stylesheet" href="{{url_for('static', filename='css/stats.css')}}">
-<link rel="stylesheet" href="{{url_for('static', filename='css/stats-responsive.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/account/user-dashboard.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/account/user-dashboard-responsive.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/admin/admin-dashboard.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/admin/admin-dashboard-responsive.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/account/stats.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/account/stats-responsive.css')}}">
 <title>Park7 - Tableau de bord</title>
 {% endblock %}
 
@@ -509,8 +509,8 @@
 {% endblock %}
 
 {% block script %}
-<script src="{{url_for('static', filename='js/dashboard.js')}}"></script>
-<script src="{{url_for('static', filename='js/admin-utils.js')}}"></script>
+<script src="{{url_for('static', filename='js/account/dashboard.js')}}"></script>
+<script src="{{url_for('static', filename='js/admin/admin-utils.js')}}"></script>
 <script src="{{url_for('static', filename='js/stats/stats-general.js')}}"></script>
 <script src="{{url_for('static', filename='js/stats/stats-fillrate.js')}}"></script>
 <script src="{{url_for('static', filename='js/stats/stats-park-usage.js')}}"></script>

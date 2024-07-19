@@ -18,7 +18,7 @@ class SyncAPIdb:
     def __init__(self) -> None:
         load_dotenv()
         self.db = DbInputStream(
-            '127.0.0.1', 3306, getenv("DB_ID"), getenv("DB_PSWD"))
+            'localhost', 3306, getenv("DB_ID"), getenv("DB_PSWD"))
 
     def fetch_db(self) -> dict:
         """Fetch stored data in local database

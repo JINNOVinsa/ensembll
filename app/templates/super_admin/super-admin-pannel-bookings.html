@@ -1,8 +1,8 @@
 {% extends 'super-admin-pannel.html' %}
 
 {% block additionnalHead %}
-<link rel="stylesheet" href="{{url_for('static', filename='css/admin-pannel-bookings.css')}}">
-<link rel="stylesheet" href="{{url_for('static', filename='css/admin-pannel-add-user-bookings.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/admin/admin-pannel-bookings.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/admin/admin-pannel-add-user-bookings.css')}}">
 {% endblock %}
 
 {% block tableTitle %}
@@ -400,7 +400,7 @@
 {% endblock %}
 
 {% block additionnalScript %}
-<script src="{{url_for('static', filename='js/super-admin-bookings.js')}}"></script>
-<script src="{{url_for('static', filename='js/super-admin-add-user-booking.js')}}"></script>
-<script src="{{url_for('static', filename='js/admin-pannel-search-bookings.js')}}"></script>
+<script src="{{url_for('static', filename='js/super-admin/super-admin-bookings.js')}}"></script>
+<script src="{{url_for('static', filename='js/super-admin/super-admin-add-user-booking.js')}}"></script>
+<script src="{{url_for('static', filename='js/admin/admin-pannel-search-bookings.js')}}"></script>
 {% endblock %}

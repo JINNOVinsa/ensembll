@@ -75,10 +75,10 @@
 {% extends 'index.html' %}
 
 {% block head %}
-<link rel="stylesheet" href="{{url_for('static', filename='css/admin-dashboard.css')}}">
-<link rel="stylesheet" href="{{url_for('static', filename='css/admin-dashboard-responsive.css')}}">
-<link rel="stylesheet" href="{{url_for('static', filename='css/notifications.css')}}">
-<link rel="stylesheet" href="{{url_for('static', filename='css/notifications-responsive.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/admin/admin-dashboard.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/admin/admin-dashboard-responsive.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/account/notifications.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/account/notifications-responsive.css')}}">
 <title>Park7 - Notifications</title>
 {% endblock %}
 
@@ -145,6 +145,6 @@
 {% endblock %}
 
 {% block script %}
-<script src="{{url_for('static', filename='js/admin-utils.js')}}"></script>
-<script src="{{url_for('static', filename='js/alerts.js')}}"></script>
+<script src="{{url_for('static', filename='js/admin/admin-utils.js')}}"></script>
+<script src="{{url_for('static', filename='js/account/alerts.js')}}"></script>
 {% endblock %}

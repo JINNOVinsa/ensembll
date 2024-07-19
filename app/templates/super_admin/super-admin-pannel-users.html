@@ -1,8 +1,8 @@
 {% extends 'super-admin-pannel.html' %}
 
 {% block additionnalHead %}
-<link rel="stylesheet" href="{{url_for('static', filename='css/admin-pannel-users.css')}}">
-<link rel="stylesheet" href="{{url_for('static', filename='css/super-admin-users.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/admin/admin-pannel-users.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/super-admin/super-admin-users.css')}}">
 {% endblock %}
 
 {% block tableTitle %}
@@ -291,9 +291,9 @@
 {% endblock %}
 
 {% block additionnalScript %}
-<script src="{{url_for('static', filename='js/super-admin-general.js')}}"></script>
-<script src="{{url_for('static', filename='js/super-admin-users.js')}}"></script>
-<script src="{{url_for('static', filename='js/admin-pannel-search-users.js')}}"></script>
-<script src="{{url_for('static', filename='js/super-admin-add-user.js')}}"></script>
-<script src="{{url_for('static', filename='js/super-admin-add-admin.js')}}"></script>
+<script src="{{url_for('static', filename='js/super-admin/super-admin-general.js')}}"></script>
+<script src="{{url_for('static', filename='js/super-admin/super-admin-users.js')}}"></script>
+<script src="{{url_for('static', filename='js/admin/admin-pannel-search-users.js')}}"></script>
+<script src="{{url_for('static', filename='js/super-admin/super-admin-add-user.js')}}"></script>
+<script src="{{url_for('static', filename='js/super-admin/super-admin-add-admin.js')}}"></script>
 {% endblock %}

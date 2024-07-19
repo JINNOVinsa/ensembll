@@ -1,9 +1,9 @@
 {% extends 'index.html' %}
 
 {% block head %}
-<link rel="stylesheet" href="{{url_for('static', filename='css/auth.css')}}">
-<link rel="stylesheet" href="{{url_for('static', filename='css/auth-mobile.css')}}">
-<link rel="stylesheet" href="{{url_for('static', filename='css/create-account.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/account/auth.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/account/auth-mobile.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/account/create-account.css')}}">
 <title>Park7 - Nouveau compte</title>
 {% endblock %}
 
@@ -72,5 +72,5 @@
 {% endblock %}
 
 {% block script %}
-<script src="{{url_for('static', filename='js/account-creator-handler.js')}}"></script>
+<script src="{{url_for('static', filename='js/account/account-creator-handler.js')}}"></script>
 {% endblock %}

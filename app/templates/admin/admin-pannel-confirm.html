@@ -1,8 +1,8 @@
 {% extends 'admin-pannel.html' %}
 
 {% block additionnalHead %}
-<link rel="stylesheet" href="{{url_for('static', filename='css/admin-pannel.css')}}">
-<link rel="stylesheet" href="{{url_for('static', filename='css/admin-pannel-confirm.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/admin/admin-pannel.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/admin/admin-pannel-confirm.css')}}">
 {% endblock %}
 
 {% block tableTitle %}
@@ -159,7 +159,7 @@
 {% endblock %}
 
 {% block additionnalScript %}
-<script src="{{url_for('static', filename='js/admin-pannel-general.js')}}"></script>
-<script src="{{url_for('static', filename='js/admin-pannel-confirm.js')}}"></script>
-<script src="{{url_for('static', filename='js/admin-pannel-search-users.js')}}"></script>
+<script src="{{url_for('static', filename='js/admin/admin-pannel-general.js')}}"></script>
+<script src="{{url_for('static', filename='js/admin/admin-pannel-confirm.js')}}"></script>
+<script src="{{url_for('static', filename='js/admin/admin-pannel-search-users.js')}}"></script>
 {% endblock %}
