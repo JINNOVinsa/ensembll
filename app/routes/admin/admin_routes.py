@@ -1,125 +1,48 @@
-from static.assets.usr import profilesTypes as img
-
-from models.api.apiInterface import APIinterface
-from models.api.statsApi import StatsInterface
 from models.api import apiUrls
-from models.api import statsUrls
 from models.utils import Auth, Book
 from models.mailling.mailInterface import Mailling
 import models.mailling.mailPayloads as mails
-from models.database.db_utils import DbInputStream
 import models.database.queries as db_requests
-import re
 
 from models.utils import Auth, Book
-from flask import Flask, render_template, request, make_response, url_for, redirect, jsonify, Blueprint
-from datetime import datetime, timedelta, date
-import calendar
+from flask import render_template, request, make_response, url_for, redirect, jsonify, Blueprint, current_app
+
 import locale
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
-
-from mysql.connector.errors import IntegrityError
-
-from dotenv import load_dotenv
-from os import getenv
-
 from re import match
-
-from uuid import uuid4
+from decorators import role_required
 
 # For exporting users
 from io import StringIO
 import csv
 
-
-BASE_APP_URL = "https://cogestion-parking.ensembll.fr"
+db = current_app.config['DB_APP']
+db_flow = current_app.config['DB_FLOW']
+mail_host = current_app.config['MAIL_HOST']
+mail_pswd = current_app.config['MAIL_PSWD']
+api = current_app.config['API']
+contract = current_app.config['CONTRACT']
+capacity = current_app.config['CAPACITY']
+parked_cars = current_app.config['PARKED_CARS']
+statsApi = current_app.config['STATS_API']
+area_id = current_app.config['AREA_ID']
 
 imagePath = "static/assets/park7_logo.png"
-
-
-load_dotenv()
-db = DbInputStream('mysql-app', int(getenv("DB_PORT")), getenv("DB_ID"), getenv("DB_PSWD"))
-db_flow = DbInputStream('mysql-flow', int(getenv("DB_PORT2")), getenv("DB_FLOW_ID"), getenv("DB_FLOW_PSWD"), database=getenv("DB_FLOW_NAME"))
-
-mail_host = getenv("API_MAIL_LOG")
-mail_pswd = getenv("API_MAIL_PSWD")
-
-api_log = getenv("API_PARKKI_LOG")
-api_token = getenv("API_PARKKI_TOKEN")
-
-api = APIinterface(api_log, api_token)
-api.read_tokens()
-if api.should_refresh():
-    try:
-        api.refresh_auth_token()
-    except ConnectionRefusedError:
-        api.fetch_auth_token(api_log, api_token)
-
-contracts = api.get_api(apiUrls.GET_CONTRACTS).json()['contracts']
-for c in contracts:
-    if c['name'] == 'Humanicité':
-        api.contract = c
-        break
-
-stats_log = getenv("STATS_PARKKI_ID")
-stats_token = getenv("STATS_PARKKI_TOKEN")
-
-statsApi = StatsInterface(stats_log, stats_token)
-statsApi.read_tokens()
-statsApi.fetch_auth_token(stats_log, stats_token)
-if statsApi.should_refresh():
-    try:
-        print('Refresh stats')
-        statsApi.refresh_auth_token()
-    except ConnectionRefusedError:
-        print('Fetch new')
-        statsApi.fetch_auth_token(stats_log, stats_token)
-
-contract = None
-
-r = statsApi.get_api(statsUrls.GET_CONTRACTS)
-for c in r.json():
-    if c["name"] == "Humanicité":
-        contract = c
-        break
-
-r = statsApi.get_api(statsUrls.GET_AREAS, query_payload={'contract_id': contract['id']})
-areas = r.json()["areas"]
-area_id = None
-for a in areas:
-    if a['type'] == 'PARKANDFLOW':
-        area_id = a['id']
-
-if area_id is None:
-    print("Can't retreive area id from statistics api")
-    exit()
-
-# Capacité du parking et véhicules présents
-r = statsApi.post_api(statsUrls.GET_GENERAL_STATS_OF_PARKING, payload={'timestamp': datetime.today().timestamp(), 'areas': [area_id]}).json()
-capacity = r['nb_spots']
-parked_cars = r['parked_cars']['value']
-
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/adminPannel')
 
 @admin_bp.route('/', methods=['GET'])
-# @app.route('/adminPannel', methods=['GET'])
+@role_required("admin")
 def adminPannel():
     return redirect(url_for('admin.adminPannelUsers'))
 
 @admin_bp.route('/users', methods=['GET'])
-# @app.route('/adminPannel/', methods=['GET'])
+@role_required("admin")
 def adminPannelUsers():
     auth_token = request.cookies.get('SESSID', default=None)
 
     usr_id = Auth.is_auth(auth_token, db)
-
-    if usr_id is None:
-        return redirect(url_for('login'))
-
-    if not Auth.is_admin(usr_id, db):
-        return make_response("UNAUTHORIZED", 401)
 
     admin_entity = db.read(db_requests.GET_ENTITY_ID_FROM_USER.format(usrId=usr_id))[0][0]
     count = db.read(db_requests.GET_USERS_COUNT_BY_ENTITY.format(entityId=admin_entity))[0][0]
@@ -128,17 +51,11 @@ def adminPannelUsers():
     return render_template("admin-pannel-users.html", connected=True, usercount=count, profilesNames=pNames)
 
 @admin_bp.route('/confirm', methods=['GET'])
-# @app.route('/adminPannel/', methods=['GET'])
+@role_required("admin")
 def adminPannelConfirm():
     auth_token = request.cookies.get('SESSID', default=None)
 
     usr_id = Auth.is_auth(auth_token, db)
-    
-    if usr_id is None:
-        return redirect(url_for('login'))
-
-    if not Auth.is_admin(usr_id, db):
-        return make_response("UNAUTHORIZED", 401)
     
     entity_id = db.read(db_requests.GET_ENTITY_ID_FROM_USER.format(usrId=usr_id))[0][0]
     users_count = db.read(db_requests.GET_USERS_TO_CONFIRM_COUNT_BY_ENTITY_COUNT.format(entityId=entity_id))[0][0]
@@ -148,18 +65,12 @@ def adminPannelConfirm():
 
 
 @admin_bp.route('/bookings', methods=['GET'])
-# @app.route('/adminPannel/', methods=['GET'])
+@role_required("admin")
 def adminPannelBookings():
 
     auth_token = request.cookies.get("SESSID", default=None)
 
     usr_id = Auth.is_auth(auth_token, db)
-
-    if usr_id is None:
-        return redirect(url_for('login'), 302)
-    
-    if not Auth.is_admin(usr_id, db):
-        return make_response("UNAUTHORIZED", 401)
     
     # Get admin entity
     try:
@@ -171,14 +82,11 @@ def adminPannelBookings():
     return render_template('admin-pannel-bookings.html', connected=True, bookingcount=bCount)
 
 @admin_bp.route('/fetchUserPlates', methods=['GET'])
-# @app.route('/adminPannel/', methods=['GET'])
+@role_required("admin")
 def adminPannelUserPlates():
     auth_token = request.cookies.get('SESSID', default=None)
 
     admin_id = Auth.is_auth(auth_token, db)
-
-    if not Auth.is_admin(admin_id, db):
-        return make_response('UNAUTHORIZED', 401)
     
     user_id = request.args.get('usrID', default=None)
 
@@ -196,14 +104,11 @@ def adminPannelUserPlates():
     return make_response(plates, 200)
 
 @admin_bp.route('/getUser', methods=['GET'])
-# @app.route('/adminPannel/', methods=['GET'])
+@role_required("admin")
 def getUser():
     auth_token = request.cookies.get('SESSID', default=None)
 
     admin_id = Auth.is_auth(auth_token, db)
-
-    if not Auth.is_admin(admin_id, db):
-        return make_response("UNAUTHORIZED", 401)
     
     if (request.args.get('usrID') == None):
         return make_response("BAD REQUEST", 400)
@@ -232,14 +137,11 @@ def getUser():
     return make_response(jsonify(usr_payload), 200)
 
 @admin_bp.route('/getAllUsers', methods=['GET'])
-# @app.route('/adminPannel/', methods=['GET'])
+@role_required("admin")
 def getAllUsersFromEntity():
     auth_token = request.cookies.get("SESSID", default=None)
 
     admin_id = Auth.is_auth(auth_token, db)
-
-    if not Auth.is_admin(admin_id, db):
-        return make_response("UNAUTHORIZED", 401)
 
     admin_entity = db.read(db_requests.GET_ENTITY_ID_FROM_USER.format(usrId=admin_id))[0][0]
 
@@ -270,14 +172,11 @@ def getAllUsersFromEntity():
     return make_response(users_list, 200)
 
 @admin_bp.route('/getAllBookings', methods=['GET'])
-# @app.route('/adminPannel/', methods=['GET'])
+@role_required("admin")
 def getAllBookingsFromEntity():
     auth_token = request.cookies.get("SESSID", default=None)
 
     admin_id = Auth.is_auth(auth_token, db)
-
-    if not Auth.is_admin(admin_id, db):
-        return make_response("UNAUTHORIZED", 401)
     
     admin_entity = db.read(db_requests.GET_ENTITY_ID_FROM_USER.format(usrId=admin_id))[0][0]
 
@@ -324,18 +223,8 @@ def getAllBookingsFromEntity():
     return make_response(jsonify(entityBookings), 200)
 
 @admin_bp.route('/confirmUser', methods=['POST'])
-# @app.route('/adminPannel/', methods=['POST'])
+@role_required("admin")
 def confirmUser():
-    auth_token = request.cookies.get('SESSID', default=None)
-
-    usr_id = Auth.is_auth(auth_token, db)
-
-    if usr_id is None:
-        return redirect(url_for('login'))
-
-    if not Auth.is_admin(usr_id, db):
-        return make_response('UNAUTHORIZED', 401)
-
     to_confirm_user = str(request.form.get('USR_ID'))
 
     try:
@@ -361,18 +250,11 @@ def confirmUser():
     return make_response('OK', 200)
 
 @admin_bp.route('/editUser', methods=['PUT'])
-# @app.route('/adminPannel/', methods=['PUT'])
+@role_required("admin")
 def editUser():
     auth_token = request.cookies.get("SESSID", default=None)
 
     admin_id = Auth.is_auth(auth_token, db)
-
-    if admin_id is None:
-        return redirect(url_for('login'))
-    
-    if not Auth.is_admin(admin_id, db):
-        return make_response("UNAUTHORIZED", 401)
-
     usrId = request.form.get("id")
     usrEntity = db.read(db_requests.GET_ENTITY_ID_FROM_USER.format(usrId=usrId))[0][0]
 
@@ -413,17 +295,11 @@ def editUser():
         return make_response("BAD REQUEST", 400)
 
 @admin_bp.route('/deleteUser', methods=['POST'])
-# @app.route('/adminPannel/', methods=['POST'])
+@role_required("admin")
 def deleteUser():
     auth_token = request.cookies.get("SESSID", default=None)
 
     usr_id = Auth.is_auth(auth_token, db)
-
-    if usr_id is None:
-        return redirect(url_for('login'))
-    
-    if not Auth.is_admin(usr_id, db):
-        return make_response('UNAUTHORIZED', 401)
 
     usr_to_delete = request.form.get('usrId', default=None)
 
@@ -444,17 +320,11 @@ def deleteUser():
     return make_response('OK', 200)
 
 @admin_bp.route('/exportUsers', methods=['GET'])
-# @app.route('/adminPannel/', methods=['GET'])
+@role_required("admin")
 def adminExportUser():
     auth_token = request.cookies.get("SESSID", default=None)
 
     admin_id = Auth.is_auth(auth_token, db)
-
-    if admin_id is None:
-        return redirect(url_for('login'))
-
-    if not Auth.is_admin(admin_id, db):
-        return make_response('UNAUTHORIZED', 401)
 
     entity = db.read(db_requests.GET_ENTITY_ID_FROM_USER.format(usrId=admin_id))[0][0]
 
@@ -491,18 +361,8 @@ def adminExportUser():
     return response
 
 @admin_bp.route('/addProfile', methods=['POST'])
-# @app.route('/adminPannel/', methods=['POST'])
+@role_required("admin")
 def addProfile():
-    auth_token = request.cookies.get("SESSID", default=None)
-
-    user_id = Auth.is_auth(auth_token, db)
-
-    if user_id is None:
-        return redirect(url_for('login'))
-    
-    if not Auth.is_super_admin(user_id, db):
-        return make_response("UNAUTHORIZED", 401)
-
     profile_entity = str(request.form.get("entity"));
     profile_name = str(request.form.get("name"));
     profile_criticity = request.form.get("criticity");
@@ -517,17 +377,8 @@ def addProfile():
     return make_response("OK", 200)
 
 @admin_bp.route('/editProfile', methods=['PUT'])
-# @app.route('/adminPannel/', methods=['PUT'])
+@role_required("admin")
 def editProfile():
-    auth_token =request.cookies.get('SESSID', default=None)
-
-    usr_id = Auth.is_auth(auth_token, db)
-
-    if usr_id is None:
-        return redirect(url_for('login'))
-    
-    if not Auth.is_super_admin(usr_id, db):
-        return make_response('UNAUTHORIZED', 401)
     
     pID = request.form.get('id')
     newName = request.form.get('name')
@@ -541,17 +392,8 @@ def editProfile():
     return make_response("OK", 200)
 
 @admin_bp.route('/deleteProfile', methods=['DELETE'])
-# @app.route('/adminPannel/deleteProfile', methods=['DELETE'])
+@role_required("admin")
 def deleteProfile():
-    token = request.cookies.get("SESSID", default=None)
-
-    admin_id = Auth.is_auth(token, db)
-
-    if admin_id is None:
-        return redirect(url_for('login'))
-    
-    if not Auth.is_super_admin(admin_id, db):
-        return make_response("UNAUTHORIZED", 401)
     
     profile_id = request.form.get('profileId', default=None)
 
@@ -576,17 +418,11 @@ def deleteProfile():
 
 
 @admin_bp.route('/newaccount', methods=['POST'])
-# @app.route('/adminPannel/', methods=['POST'])
+@role_required("admin")
 def adminSubmitAccount():
     token = request.cookies.get("SESSID", default=None)
 
     admin_id = Auth.is_auth(token, db)
-
-    if admin_id is None:
-        return redirect(url_for('login'))
-    
-    if not Auth.is_admin(admin_id, db):
-        return make_response("UNAUTHORIZED", 401)
 
     # Check if an account already exists with this email or id
     req_data = dict(request.form)
@@ -655,15 +491,8 @@ def adminSubmitAccount():
 
 
 @admin_bp.route('/addUserBooking', methods=['POST'])
-# @app.route('/adminPannel/', methods=['POST'])
+@role_required("admin")
 def add_user_booking():
-    token = request.cookies.get('SESSID', default=None)
-
-    admin_user = Auth.is_auth(token, db)
-    if admin_user is None:
-        return redirect(url_for('login'), 302)
-    if not Auth.is_admin(admin_user, db):
-        return make_response('UNAUTHORIZED', 401)
 
     usr = request.form.get('usrId')
     plate = request.form.get('plate').upper()
@@ -707,9 +536,8 @@ def add_user_booking():
 
     return make_response('INVALID DATA', 400)
 
-
 @admin_bp.route('/deleteUserBooking', methods=['DELETE'])
-# @app.route("/adminPannel/", methods=["DELETE"])
+@role_required("admin")
 def delete_user_booking():
     token = request.cookies.get('SESSID', default=None)
 
@@ -717,9 +545,6 @@ def delete_user_booking():
 
     if admin_usr is None:
         return make_response('INVALID TOKEN', 403)
-
-    if not Auth.is_admin(admin_usr, db):
-        return make_response('UNAUTHORIZED', 401)
 
     booking_id = request.form.get('id')
     usr_id = request.form.get('usrId')

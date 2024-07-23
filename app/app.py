@@ -1,117 +1,58 @@
 # coding: utf-8
-
-import json
 import logging
 from loaders import RecursiveFileSystemLoader
 from static.assets.usr import profilesTypes as img
 
-from models.api.apiInterface import APIinterface
-from models.api.statsApi import StatsInterface
 from models.api import apiUrls
-from models.api import statsUrls
 from models.utils import Auth, Book
 from models.mailling.mailInterface import Mailling
 import models.mailling.mailPayloads as mails
-from models.database.db_utils import DbInputStream
 import models.database.queries as db_requests
 import re
 
 from flask import Flask, render_template, request, make_response, url_for, redirect, jsonify
-from datetime import datetime, timedelta, date
-import calendar
+from datetime import datetime, timedelta
 import locale
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 from mysql.connector.errors import IntegrityError
 
-from dotenv import load_dotenv
-from os import getenv
-
 from re import match
-
 from uuid import uuid4
-
-# For exporting users
-from io import StringIO
-import csv
-
+from config import Config
 
 BASE_APP_URL = "https://cogestion-parking.ensembll.fr"
 
 imagePath = "static/assets/park7_logo.png"
 
-from routes.admin.admin_routes import admin_bp
-from routes.superAdmin.super_admin_routes import super_admin_bp
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
+    with app.app_context():
+        from routes.admin.admin_routes import admin_bp
+        from routes.superAdmin.super_admin_routes import super_admin_bp
+        from routes.stats.stats_routes import stats_bp
 
-app = Flask(__name__)
-
-app.register_blueprint(admin_bp)
-app.register_blueprint(super_admin_bp)
+        app.register_blueprint(admin_bp)
+        app.register_blueprint(super_admin_bp)
+        app.register_blueprint(stats_bp)
+    return app
+app = create_app()
 
 app.jinja_loader = RecursiveFileSystemLoader('templates')
 
+db = app.config['DB_APP']
+db_flow = app.config['DB_FLOW']
+mail_host = app.config['MAIL_HOST']
+mail_pswd = app.config['MAIL_PSWD']
+api = app.config['API']
+contract = app.config['CONTRACT']
+capacity = app.config['CAPACITY']
+parked_cars = app.config['PARKED_CARS']
+statsApi = app.config['STATS_API']
+area_id = app.config['AREA_ID']
 
-load_dotenv()
-db = DbInputStream('mysql-app', int(getenv("DB_PORT")), getenv("DB_ID"), getenv("DB_PSWD"))
-db_flow = DbInputStream('mysql-flow', int(getenv("DB_PORT")), getenv("DB_FLOW_ID"), getenv("DB_FLOW_PSWD"), database=getenv("DB_FLOW_NAME"))
 
-mail_host = getenv("API_MAIL_LOG")
-mail_pswd = getenv("API_MAIL_PSWD")
-
-api_log = getenv("API_PARKKI_LOG")
-api_token = getenv("API_PARKKI_TOKEN")
-
-api = APIinterface(api_log, api_token)
-api.read_tokens()
-if api.should_refresh():
-    try:
-        api.refresh_auth_token()
-    except ConnectionRefusedError:
-        api.fetch_auth_token(api_log, api_token)
-
-contracts = api.get_api(apiUrls.GET_CONTRACTS).json()['contracts']
-for c in contracts:
-    if c['name'] == 'Humanicité':
-        api.contract = c
-        break
-
-stats_log = getenv("STATS_PARKKI_ID")
-stats_token = getenv("STATS_PARKKI_TOKEN")
-
-statsApi = StatsInterface(stats_log, stats_token)
-statsApi.read_tokens()
-statsApi.fetch_auth_token(stats_log, stats_token)
-if statsApi.should_refresh():
-    try:
-        print('Refresh stats')
-        statsApi.refresh_auth_token()
-    except ConnectionRefusedError:
-        print('Fetch new')
-        statsApi.fetch_auth_token(stats_log, stats_token)
-
-contract = None
-
-r = statsApi.get_api(statsUrls.GET_CONTRACTS)
-for c in r.json():
-    if c["name"] == "Humanicité":
-        contract = c
-        break
-
-r = statsApi.get_api(statsUrls.GET_AREAS, query_payload={'contract_id': contract['id']})
-areas = r.json()["areas"]
-area_id = None
-for a in areas:
-    if a['type'] == 'PARKANDFLOW':
-        area_id = a['id']
-
-if area_id is None:
-    print("Can't retreive area id from statistics api")
-    exit()
-
-# Capacité du parking et véhicules présents
-r = statsApi.post_api(statsUrls.GET_GENERAL_STATS_OF_PARKING, payload={'timestamp': datetime.today().timestamp(), 'areas': [area_id]}).json()
-capacity = r['nb_spots']
-parked_cars = r['parked_cars']['value']
 
 @app.route('/', methods=['GET'])
 def home():
@@ -483,16 +424,6 @@ def submitAccount():
     "hierarchical_level": 3,
     "has_unlimited_geographical_access": True
     }
-
-    # Affichage détaillé de chaque champ du payload
-    logging.debug(f"Firstname: {payload['firstname']}")
-    logging.debug(f"Lastname: {payload['lastname']}")
-    logging.debug(f"Email: {payload['email']}")
-    logging.debug(f"License Plates: {payload['license_plates']}")
-    logging.debug(f"Contracts: {payload['contracts']}")
-    logging.debug(f"User Groups: {payload['user_groups']}")
-    logging.debug(f"Hierarchical Level: {payload['hierarchical_level']}")
-    logging.debug(f"Has Unlimited Geographical Access: {payload['has_unlimited_geographical_access']}")
 
     # Envoi de la requête POST
     r = api.post_api(apiUrls.POST_USER, payload=payload)
@@ -1001,384 +932,6 @@ def admin_notifications_delete():
     db.write(db_requests.DELETE_ALERTS_BY_PLATE.format(plate=plate))
 
     return make_response("OK", 200)
-
-
-
-
-""" Stats endpoints """
-@app.route('/stats/fillrate/hourly', methods=['GET'])
-def get_fillrate_stats_hourly():
-    from_timestamp = request.args.get("from", default=None)
-    to_timestamp = request.args.get("to", default=None)
-
-    if from_timestamp is None or to_timestamp is None:
-        return make_response("BAD REQUEST", 400)
-    
-    from_timestamp = int(from_timestamp)
-    to_timestamp = int(to_timestamp)
-    delta = to_timestamp - from_timestamp
-
-    if delta <= 0:
-        return make_response("BAD REQUEST", 400)
-
-    n_hours = delta // 3600
-
-    from_date = datetime.fromtimestamp(int(from_timestamp))
-
-    days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
-
-    labels = []
-    for _ in range(n_hours):
-        labels.append(days[from_date.weekday()] + " " + str(from_date.hour) + "h")
-        from_date = from_date + timedelta(hours=1)
-    
-    data = []
-    for i in range(n_hours)[::24]:
-        r = statsApi.get_api(statsUrls.GET_DATA_ATTENDANCE, path_parameters={'id': area_id}, query_payload={'from': from_timestamp+i*3600, 'to': to_timestamp-(n_hours-i-24+1)*3600, 'flow_types': 'CAR,TWO_WHEELER,DELIVERY', 'x_axis': 'HOUR'})
-        if (r.status_code != 200):
-            return make_response("API ERROR", 500)
-        
-        data += list(r.json()['real_time'].values())
-
-
-    return make_response(jsonify({'data': data, 'labels': labels}), 200)
-
-@app.route('/stats/fillrate/daily', methods=['GET'])
-def get_fillrate_stats_daily():
-    from_timestamp = request.args.get("from", default=None)
-    to_timestamp = request.args.get("to", default=None)
-
-    if from_timestamp is None or to_timestamp is None:
-        return make_response("BAD REQUEST", 400)
-    
-    n_days = (int(to_timestamp) - int(from_timestamp)) // 86400
-
-    days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
-
-    from_date = datetime.fromtimestamp(int(from_timestamp))
-    labels = []
-    for _ in range(n_days):
-        labels.append(days[from_date.weekday()] + " " + str(from_date.day))
-        from_date = from_date + timedelta(days=1)
-
-    r = statsApi.get_api(statsUrls.GET_DATA_ATTENDANCE, path_parameters={'id': area_id}, query_payload={'from': from_timestamp, 'to': to_timestamp, 'flow_types': 'CAR,TWO_WHEELER,DELIVERY', 'x_axis': 'DAY'})
-    
-    if (r.status_code != 200):
-        return make_response("API ERROR", 500)
-
-    return make_response(jsonify({'data': list(r.json()['real_time'].values()), 'labels': labels}), 200)
-
-@app.route('/stats/fillrate/weekly', methods=['GET'])
-def get_fillrate_stats_weekly():
-    from_timestamp = request.args.get("from", default=None)
-    to_timestamp = request.args.get("to", default=None)
-
-    if from_timestamp is None or to_timestamp is None:
-        return make_response("BAD REQUEST", 400)
-    
-    n_weeks = (int(to_timestamp) - int(from_timestamp)) // 604800
-
-    days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
-
-    from_date = datetime.fromtimestamp(int(from_timestamp))
-    labels = []
-    for _ in range(n_weeks):
-        labels.append(days[from_date.weekday()] + " " + str(from_date.day))
-        from_date = from_date + timedelta(weeks=1)
-
-    r = statsApi.get_api(statsUrls.GET_DATA_ATTENDANCE, path_parameters={'id': area_id}, query_payload={'from': from_timestamp, 'to': to_timestamp, 'flow_types': 'CAR,TWO_WHEELER,DELIVERY', 'x_axis': 'DAY'})
-
-    if r.status_code != 200:
-        return make_response("API ERROR", 500)
-
-    week_sum = 0
-    values = list(r.json()['real_time'].values())
-    data = []
-    for i in range(len(values)):
-        if i%7 == 0 and i != 0:
-            data.append(week_sum)
-            week_sum = 0
-
-        week_sum += values[i]
-
-    data.append(week_sum)
-
-    return make_response(jsonify({'data': data, 'labels': labels}), 200)
-
-@app.route('/stats/fillrate/monthly', methods=['GET'])
-def get_fillrate_stats_monthly():
-    from_timestamp = request.args.get("from", default=None)
-    to_timestamp = request.args.get("to", default=None)
-
-    if from_timestamp is None or to_timestamp is None:
-        return make_response("BAD REQUEST", 400)
-    
-    n_months = (int(to_timestamp) - int(from_timestamp)) // 2592000
-
-    months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
-
-    r = statsApi.get_api(statsUrls.GET_DATA_ATTENDANCE, path_parameters={'id': area_id}, query_payload={'from': from_timestamp, 'to': to_timestamp, 'flow_types': 'CAR,TWO_WHEELER,DELIVERY', 'x_axis': 'DAY'})
-
-    if r.status_code != 200:
-        return make_response("API ERROR", 500)
-
-    from_date = datetime.fromtimestamp(int(from_timestamp))
-    data = []
-    labels = []
-    value_index_offset = 0
-    values = list(r.json()['real_time'].values())
-    for _ in range(n_months):
-        end_month_day = calendar.monthrange(from_date.year, from_date.month)[1]
-
-        labels.append(months[from_date.month-1])
-        from_date = from_date + timedelta(days=end_month_day)
-        month_sum = 0
-        for v in values[value_index_offset:value_index_offset+end_month_day]:
-            month_sum += v
-        value_index_offset += end_month_day
-        data.append(month_sum)
-
-    return make_response(jsonify({'data': data, 'labels': labels}), 200)
-
-@app.route('/stats/parkusage', methods=['GET'])
-def get_parkusage_stats():
-    today = date.today()
-    incrementalDateStart = date(today.year-1, today.month, 1)
-    incrementalDateEnd = date(today.year-1, today.month, calendar.monthrange(today.year-1, today.month)[1])
-    
-    startTS = datetime.combine(incrementalDateStart, datetime.min.time())
-    endTS = datetime.combine(incrementalDateEnd, datetime.min.time())
-    
-    data = []
-    for _ in range(12):
-        end_month_day = calendar.monthrange(startTS.year, startTS.month)[1]
-        
-        r = statsApi.get_api(statsUrls.GET_GENERAL_STATS_OF_AREA, path_parameters={'id': area_id}, query_payload={'from':startTS.timestamp(), 'to':endTS.timestamp(), 'flow_types':'CAR,TWO_WHEELER,DELIVERY'})
-        if r.status_code != 200:
-            return make_response("API ERROR", 500)
-        
-        data.append(r.json()['flow']['in']['value'])
-
-        startTS = startTS + timedelta(days=end_month_day)
-        endTS = endTS + timedelta(days=end_month_day)
-
-
-    months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
-    labels = months[date.today().month - 1::] + months[:date.today().month - 1]
-
-    
-    return make_response(jsonify({'data': data, 'labels': labels}), 200)
-
-@app.route('/stats/realfillrate/hourly', methods=['GET'])
-def get_realfillrate_stats_hourly():
-    from_timestamp = request.args.get("from", default=None)
-    to_timestamp = request.args.get("to", default=None)
-
-    if (from_timestamp is None or to_timestamp is None):
-        return make_response("BAD REQUEST", 400)
-    
-    from_timestamp = int(from_timestamp)
-    to_timestamp = int(to_timestamp)
-
-    n_hours = (to_timestamp - from_timestamp) // 3600
-
-    from_date = datetime.fromtimestamp(int(from_timestamp))
-
-    days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
-
-    labels = []
-    for _ in range(n_hours):
-        labels.append(days[from_date.weekday()] + " " + str(from_date.hour) + "h")
-        from_date = from_date + timedelta(hours=1)
-
-    data = []
-    for i in range(n_hours)[::24]:
-        r = statsApi.get_api(statsUrls.GET_DATA_ATTENDANCE, path_parameters={'id': area_id}, query_payload={'from': from_timestamp+i*3600, 'to': to_timestamp-(n_hours-i-24+1)*3600, 'flow_types': 'CAR,TWO_WHEELER,DELIVERY', 'x_axis': 'HOUR'})
-        if (r.status_code != 200):
-            return make_response("API ERROR", 500)
-        r_data = r.json()
-        data += [v1/v2 if v2 != 0 and not (v1 is None or v2 is None) else 0 for v1, v2 in zip(list(r_data['real_time'].values()), list(r_data['previsional'].values()))]
-
-    return make_response(jsonify({'data': data, 'labels': labels}), 200)
-
-@app.route('/stats/realfillrate/daily', methods=['GET'])
-def get_realfillrate_stats_daily():
-    from_timestamp = request.args.get("from", default=None)
-    to_timestamp = request.args.get("to", default=None)
-
-    if (from_timestamp is None or to_timestamp is None):
-        return make_response("BAD REQUEST", 400)
-    
-    from_timestamp = int(from_timestamp)
-    to_timestamp = int(to_timestamp)
-    delta = to_timestamp - from_timestamp
-
-    if delta <= 0:
-        return make_response("BAD REQUEST", 400)
-
-    n_days = delta // 86400
-
-    from_date = datetime.fromtimestamp(from_timestamp)
-
-    days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
-
-    from_date = datetime.fromtimestamp(from_timestamp)
-    labels = []
-    for _ in range(n_days):
-        labels.append(days[from_date.weekday()] + " " + str(from_date.day))
-        from_date = from_date + timedelta(days=1)
-
-    r = statsApi.get_api(statsUrls.GET_DATA_ATTENDANCE, path_parameters={'id': area_id}, query_payload={'from': from_timestamp, 'to': to_timestamp, 'flow_types': 'CAR,TWO_WHEELER,DELIVERY', 'x_axis': 'DAY'})
-    
-    if (r.status_code != 200):
-        return make_response("API ERROR", 500)
-
-    data = [v1/v2 is not(v1 is None or v2 is None) for v1, v2 in zip(list(r.json()['real_time'].values()), list(r.json()['previsional'].values()))]
-    return make_response(jsonify({'data': data, 'labels': labels}), 200)
-
-@app.route('/stats/realfillrate/weekly', methods=['GET'])
-def get_realfillrate_stats_weekly():
-    from_timestamp = request.args.get("from", default=None)
-    to_timestamp = request.args.get("to", default=None)
-
-    if (from_timestamp is None or to_timestamp is None):
-        return make_response("BAD REQUEST", 400)
-    
-    n_weeks = (int(to_timestamp) - int(from_timestamp)) // 604800
-
-    days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
-
-    from_date = datetime.fromtimestamp(int(from_timestamp))
-    labels = []
-    for _ in range(n_weeks):
-        labels.append(days[from_date.weekday()] + " " + str(from_date.day))
-        from_date = from_date + timedelta(weeks=1)
-
-    r = statsApi.get_api(statsUrls.GET_DATA_ATTENDANCE, path_parameters={'id': area_id}, query_payload={'from': from_timestamp, 'to': to_timestamp, 'flow_types': 'CAR,TWO_WHEELER,DELIVERY', 'x_axis': 'DAY'})
-
-    if r.status_code != 200:
-        return make_response("API ERROR", 500)
-
-    week_sum = 0
-    values = list(r.json()['real_time'].values())
-    previsional = list(r.json()['previsional'].values())
-    data = []
-    for i in range(len(values)):
-        if i%7 == 0 and i != 0:
-            data.append(week_sum)
-            week_sum = 0
-
-        if not(values[i] is None or previsional[i] is None):
-            week_sum += values[i]/previsional[i]
-
-    data.append(week_sum)
-
-    return make_response(jsonify({'data': data, 'labels': labels}), 200)
-
-@app.route('/stats/realfillrate/monthly', methods=['GET'])
-def get_realfillrate_stats_monthly():
-    from_timestamp = request.args.get("from", default=None)
-    to_timestamp = request.args.get("to", default=None)
-
-    if (from_timestamp is None or to_timestamp is None):
-        return make_response("BAD REQUEST", 400)
-    
-    n_months = (int(to_timestamp) - int(from_timestamp)) // 2592000
-
-    months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
-
-    r = statsApi.get_api(statsUrls.GET_DATA_ATTENDANCE, path_parameters={'id': area_id}, query_payload={'from': from_timestamp, 'to': to_timestamp, 'flow_types': 'CAR,TWO_WHEELER,DELIVERY', 'x_axis': 'DAY'})
-
-    if r.status_code != 200:
-        return make_response("API ERROR", 500)
-
-    from_date = datetime.fromtimestamp(int(from_timestamp))
-    data = []
-    labels = []
-    value_index_offset = 0
-    values = list(r.json()['real_time'].values())
-    previsional = list(r.json()['previsional'].values())
-    for _ in range(n_months):
-        end_month_day = calendar.monthrange(from_date.year, from_date.month)[1]
-
-        labels.append(months[from_date.month-1])
-        from_date = from_date + timedelta(days=end_month_day)
-        month_sum = 0
-        for v, p in zip(values[value_index_offset:value_index_offset+end_month_day], previsional[value_index_offset:value_index_offset+end_month_day]):
-            month_sum += v/p
-        value_index_offset += end_month_day
-        data.append(month_sum)
-
-    return make_response(jsonify({'data': data, 'labels': labels}), 200)
-
-@app.route('/stats/parkduration/plate', methods=['GET'])
-def get_parkduration_plate():
-    plate = request.args.get('plate', default=None)
-
-    if plate is None or (not match('^[A-Z]{2}-[0-9]{3}-[A-Z]{2}$', plate) and not match('^[0-9]{4}-[A-Z]{2}-[0-9]{2}$', plate)):
-        return make_response("BAD REQUEST", 400)
-    
-    records_in = db_flow.read(db_requests.GET_PLATE_IN_DATETIMES_RECORDS.format(plate=plate))
-    records_out = db_flow.read(db_requests.GET_PLATE_OUT_DATETIMES_RECORDS.format(plate=plate))
-
-    payload = {}
-
-    duration = timedelta(days=0)
-    for i in range(min(len(records_in), len(records_out))):
-        duration += records_out[i][1] - records_in[i][1]
-    
-    present = len(records_in) == len(records_out)+1
-
-    payload["duration"] = {
-                "days": duration.days,
-                "hours": duration.seconds//3600,
-                "minutes": duration.seconds//60%60
-                }
-    
-    payload["present"] = present
-
-    ongoing_duration = None
-    if present:
-        ongoing_duration = datetime.now() - records_in[-1][1]
-        print(ongoing_duration)
-
-        payload["ongoing"] = {
-                "days": ongoing_duration.days,
-                "hours": ongoing_duration.seconds//3600,
-                "minutes": ongoing_duration.seconds//60%60
-                }
-
-    return make_response(jsonify(payload), 200)
-
-@app.route('/stats/parkduration/entity', methods=['GET'])
-def get_parkduration_entity():
-    entity = request.args.get('entity', default=None)
-
-    if entity is None:
-        return make_response("BAD REQUEST", 400)
-
-    # Get entity's plates
-    plates = db.read(db_requests.GET_PLATES_FROM_ENTITY.format(entityId=str(entity)))
-
-    # Remove duplicates
-    plates = [p[0] for p in set(plates)]
-
-    duration = timedelta(days=0)
-
-    for plate in plates:
-        records_in = db_flow.read(db_requests.GET_PLATE_IN_DATETIMES_RECORDS.format(plate=plate))
-        records_out = db_flow.read(db_requests.GET_PLATE_OUT_DATETIMES_RECORDS.format(plate=plate))
-
-
-        for i in range(min(len(records_in), len(records_out))):
-            duration += records_out[i][1] - records_in[i][1]
-
-    return make_response({"duration": {
-                    "days": duration.days,
-                    "hours": duration.seconds//3600,
-                    "minutes": duration.seconds/60%60
-                }
-            }, 200)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

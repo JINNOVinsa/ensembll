@@ -1,119 +1,45 @@
-from static.assets.usr import profilesTypes as img
-
-from models.api.apiInterface import APIinterface
-from models.api.statsApi import StatsInterface
 from models.api import apiUrls
 from models.api import statsUrls
 from models.utils import Auth, Book
 from models.mailling.mailInterface import Mailling
 import models.mailling.mailPayloads as mails
-from models.database.db_utils import DbInputStream
 import models.database.queries as db_requests
-import re
 
 from models.utils import Auth, Book
-from flask import Flask, render_template, request, make_response, url_for, redirect, jsonify, Blueprint
-from datetime import datetime, timedelta, date
-import calendar
+from flask import current_app, render_template, request, make_response, url_for, redirect, jsonify, Blueprint
+from datetime import datetime
 import locale
+
+from decorators import role_required
+
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
-
-
-from mysql.connector.errors import IntegrityError
-
-from dotenv import load_dotenv
-from os import getenv
 
 from re import match
 
-from uuid import uuid4
-
-# For exporting users
 from io import StringIO
 import csv
-
-
-BASE_APP_URL = "https://cogestion-parking.ensembll.fr"
 
 imagePath = "static/assets/park7_logo.png"
 
 
-load_dotenv()
-db = DbInputStream('mysql-app', int(getenv("DB_PORT")), getenv("DB_ID"), getenv("DB_PSWD"))
-db_flow = DbInputStream('mysql-flow', int(getenv("DB_PORT2")), getenv("DB_FLOW_ID"), getenv("DB_FLOW_PSWD"), database=getenv("DB_FLOW_NAME"))
-
-mail_host = getenv("API_MAIL_LOG")
-mail_pswd = getenv("API_MAIL_PSWD")
-
-api_log = getenv("API_PARKKI_LOG")
-api_token = getenv("API_PARKKI_TOKEN")
-
-api = APIinterface(api_log, api_token)
-api.read_tokens()
-if api.should_refresh():
-    try:
-        api.refresh_auth_token()
-    except ConnectionRefusedError:
-        api.fetch_auth_token(api_log, api_token)
-
-contracts = api.get_api(apiUrls.GET_CONTRACTS).json()['contracts']
-for c in contracts:
-    if c['name'] == 'Humanicité':
-        api.contract = c
-        break
-
-stats_log = getenv("STATS_PARKKI_ID")
-stats_token = getenv("STATS_PARKKI_TOKEN")
-
-statsApi = StatsInterface(stats_log, stats_token)
-statsApi.read_tokens()
-statsApi.fetch_auth_token(stats_log, stats_token)
-if statsApi.should_refresh():
-    try:
-        print('Refresh stats')
-        statsApi.refresh_auth_token()
-    except ConnectionRefusedError:
-        print('Fetch new')
-        statsApi.fetch_auth_token(stats_log, stats_token)
-
-contract = None
-
-r = statsApi.get_api(statsUrls.GET_CONTRACTS)
-for c in r.json():
-    if c["name"] == "Humanicité":
-        contract = c
-        break
-
-r = statsApi.get_api(statsUrls.GET_AREAS, query_payload={'contract_id': contract['id']})
-areas = r.json()["areas"]
-area_id = None
-for a in areas:
-    if a['type'] == 'PARKANDFLOW':
-        area_id = a['id']
-
-if area_id is None:
-    print("Can't retreive area id from statistics api")
-    exit()
-
-# Capacité du parking et véhicules présents
-r = statsApi.post_api(statsUrls.GET_GENERAL_STATS_OF_PARKING, payload={'timestamp': datetime.today().timestamp(), 'areas': [area_id]}).json()
-capacity = r['nb_spots']
-parked_cars = r['parked_cars']['value']
-
+db = current_app.config['DB_APP']
+db_flow = current_app.config['DB_FLOW']
+mail_host = current_app.config['MAIL_HOST']
+mail_pswd = current_app.config['MAIL_PSWD']
+api = current_app.config['API']
+contract = current_app.config['CONTRACT']
+capacity = current_app.config['CAPACITY']
+parked_cars = current_app.config['PARKED_CARS']
+statsApi = current_app.config['STATS_API']
+area_id = current_app.config['AREA_ID']
 
 super_admin_bp = Blueprint('super_admin', __name__, url_prefix='/superAdminPannel')
 
 @super_admin_bp.route('/profiles', methods=['GET'])
-# @app.route('/superAdminPannel/', methods=['GET'])
+@role_required("super_admin")
 def superAdminPannelProfiles():
     auth_token = request.cookies.get('SESSID', default=None)
     usr_id = Auth.is_auth(auth_token, db)
-
-    if usr_id is None:
-        return redirect(url_for('login'))
-
-    if not Auth.is_super_admin(usr_id, db):
-        return make_response("UNAUTHORIZED", 401)
 
     # Récupération de toutes les entités
     entities = db.read(db_requests.GET_ALL_ENTITIES)
@@ -137,18 +63,8 @@ def superAdminPannelProfiles():
     return render_template("super-admin-pannel-profiles.html", connected=True, profiles_by_entity=profiles_by_entity, userHierarchy=userHierarchy[6], entities=entities)
 
 @super_admin_bp.route('/timeslots', methods=['GET'])
-# @app.route('/superAdminPannel/', methods=['GET'])
+@role_required("super_admin")
 def superAdminPannelProfilfesTimeSlots():
-    token = request.cookies.get("SESSID", default=None)
-
-    admin_id = Auth.is_auth(token, db)
-
-    if admin_id is None:
-        return redirect(url_for('login'))
-    
-    if not Auth.is_super_admin(admin_id, db):
-        return make_response("UNAUTHORIZED", 401)
-    
     profile_id = request.args.get("profile", default=None)
 
     if profile_id is None:
@@ -170,15 +86,8 @@ def superAdminPannelProfilfesTimeSlots():
     return make_response(time_slots_list, 200)
 
 @super_admin_bp.route('/addtimeslots', methods=['POST'])
-# @app.route('/superAdminPannel/', methods=['POST'])
+@role_required("super_admin")
 def superAdminPannelAddTimeSlot():
-    token = request.cookies.get("SESSID", default=None)
-
-    admin_id = Auth.is_auth(token, db)
-
-    if not Auth.is_super_admin(admin_id, db):
-        return make_response("UNAUTHORIZED", 401)
-    
     profile = request.form.get("profile", default=None)
     if profile is None:
         return make_response("BAD REQUEST", 400)
@@ -207,21 +116,18 @@ def superAdminPannelAddTimeSlot():
     return make_response("CREATED", 201)
 
 @super_admin_bp.route('/deletetimeslot', methods=['POST'])
-# @app.route('/superAdminPannel/', methods=['POST'])
+@role_required("super_admin")
 def superAdminPannelDeleteTimeSlot():
     token = request.cookies.get("SESSID", default=None)
 
-    admin_id = Auth.is_auth(token, db)
+    super_admin_id = Auth.is_auth(token, db)
 
-    if not Auth.is_super_admin(admin_id, db):
-        return make_response("UNAUTHORIZED", 401)
-    
     time_slot_id = request.form.get("timeslot", default=None)
 
     if time_slot_id is None:
         return make_response("BAD REQUEST", 400)
  
-    admin_entity = db.read(db_requests.GET_ENTITY_ID_FROM_USER.format(usrId=admin_id))[0][0]
+    admin_entity = db.read(db_requests.GET_ENTITY_ID_FROM_USER.format(usrId=super_admin_id))[0][0]
     time_slot = db.read(db_requests.GET_TIME_SLOT_BY_ID.format(id=time_slot_id))
 
     try:
@@ -235,20 +141,8 @@ def superAdminPannelDeleteTimeSlot():
 
 
 @super_admin_bp.route('/users', methods=['GET'])
-# @app.route('/superAdminPannel/', methods=['GET'])
+@role_required("super_admin")
 def superAdminPannelUsers():
-    # Here we retreive all users independant from entities
-
-    token = request.cookies.get('SESSID', default=None)
-
-    admin_id = Auth.is_auth(token, db)
-    
-    if admin_id is None:
-        return redirect(url_for('login'))
-    
-    if not Auth.is_super_admin(admin_id, db):
-        return make_response('UNAUTHORIZED', 401)
-    
     users_count = db.read(db_requests.GET_USERS_AND_ADMIN_COUNT)[0][0]
     entities = db.read(db_requests.GET_ALL_ENTITIES_IDS_AND_NAMES)
     profiles = db.read(db_requests.GET_PROFILES)
@@ -256,34 +150,14 @@ def superAdminPannelUsers():
     return render_template('super-admin-pannel-users.html', connected=True, usercount=users_count, entities=entities, profiles=profiles)
 
 @super_admin_bp.route('/', methods=['GET'])
-# @app.route('/superAdminPannel', methods=['GET'])
+@role_required("super_admin")
 def superAdminPannel():
-    auth_token = request.cookies.get('SESSID', default=None)
-
-    usr_id = Auth.is_auth(auth_token, db)
-
-    if usr_id is None:
-        return redirect(url_for('login'))
-
-    if not Auth.is_super_admin(usr_id, db):
-        return make_response("UNAUTHORIZED", 401)
-    
     return redirect(url_for('super_admin.superAdminPannelUsers'))
 
 
 @super_admin_bp.route('/confirm', methods=['GET'])
-# @app.route('/superAdminPannel/', methods=['GET'])
+@role_required("super_admin")
 def superAdminPannelConfirm():
-    token = request.cookies.get('SESSID', default=None)
-
-    admin_id = Auth.is_auth(token, db)
-
-    if admin_id is None:
-        return redirect(url_for('login'))
-
-    if not Auth.is_super_admin(admin_id, db):
-        return make_response('UNAUTHORIZED', 401)
-
     user_count = db.read(db_requests.GET_USERS_TO_CONFIRM_COUNT)[0][0]
     pNames = [p[0] for p in db.read(db_requests.GET_PROFILES_NAMES)]
     entities = db.read(db_requests.GET_ALL_ENTITIES_IDS_AND_NAMES)
@@ -291,18 +165,11 @@ def superAdminPannelConfirm():
     return render_template('super-admin-pannel-confirm.html', connected=True, usercount=user_count, profilesNames=pNames, entities=entities)
 
 @super_admin_bp.route('/allocation', methods=['GET'])
-# @app.route('/superAdminPannel/', methods=['GET'])
+@role_required("super_admin")
 def superAdminPannelAllocation():
     token = request.cookies.get('SESSID', default=None)
 
-    admin_id = Auth.is_auth(token, db)
-
-    if admin_id is None:
-        return redirect(url_for('login'))
-    
-    if not Auth.is_super_admin(admin_id, db):
-        return make_response('UNAUTHORIZED', 400)
-    
+    super_admin_id = Auth.is_auth(token, db)
     es = db.read(db_requests.GET_ALL_ENTITIES)
     
     entities = list()
@@ -324,41 +191,21 @@ def superAdminPannelAllocation():
         spots = '###'
 
     nbFreePlaces = spots - parked_cars
-    userHierarchy = db.read(db_requests.GET_USER_INFO_BY_ID.format(id=admin_id))[0]
+    userHierarchy = db.read(db_requests.GET_USER_INFO_BY_ID.format(id=super_admin_id))[0]
 
     return render_template('super-admin-pannel-allocation.html', connected=True, total_spots=spots, entry=entities, nbFreePlaces=nbFreePlaces, userHierarchy=userHierarchy)
 
 @super_admin_bp.route('/bookings', methods=['GET'])
-# @app.route('/superAdminPannel/', methods=['GET'])
+@role_required("super_admin")
 def superAdminPannelBookings():
-    token = request.cookies.get("SESSID", default=None)
-
-    admin_id = Auth.is_auth(token, db)
-
-    if admin_id is None:
-        return redirect(url_for('login'))
-    
-    if not Auth.is_super_admin(admin_id, db):
-        return make_response("UNAUTHORIZED", 400)
-    
     bookings_count = db.read(db_requests.GET_CURRENT_BOOKINGS_COUNT)[0][0]
 
     return render_template('super-admin-pannel-bookings.html', connected=True, bookingcount=bookings_count)
 
 
 @super_admin_bp.route('/editAllocation', methods=['PUT'])
-# @app.route('/superAdminPannel/', methods=['PUT'])
+@role_required("super_admin")
 def editAllocation():
-    token = request.cookies.get("SESSID", default=None)
-
-    admin_id = Auth.is_auth(token, db)
-
-    if admin_id is None:
-        return redirect(url_for("login"))
-    
-    if not Auth.is_super_admin(admin_id, db):
-        return make_response("UNAUTHORIZED", 401)
-    
     entity = request.form.get("id", default=None)
     if entity is None:
         return make_response("BAD REQUEST", 400)
@@ -376,17 +223,13 @@ def editAllocation():
         return make_response('BAD REQUEST', 400)
 
 @super_admin_bp.route('/getAllUsersAndAdmin', methods=['GET'])
-# @app.route('/superAdminPannel/', methods=['GET'])
+@role_required("super_admin")
 def getAllUsersAndAdmin():
     auth_token = request.cookies.get("SESSID", default=None)
-
-    admin_id = Auth.is_auth(auth_token, db)
-
-    if not Auth.is_super_admin(admin_id, db):
-        return make_response("UNAUTHORIZED", 401)
+    super_admin_id = Auth.is_auth(auth_token, db)
     
     try:
-        db.read(db_requests.GET_USER_RGPD.format(usrId=admin_id))[0][0]
+        db.read(db_requests.GET_USER_RGPD.format(usrId=super_admin_id))[0][0]
         userRGPD = True
     except:
         userRGPD = False
@@ -419,18 +262,8 @@ def getAllUsersAndAdmin():
     return make_response(users_list, 200)
 
 @super_admin_bp.route('/editUser', methods=['PUT'])
-# @app.route('/superAdminPannel/', methods=['PUT'])
+@role_required("super_admin")
 def superEditUser():
-    auth_token = request.cookies.get("SESSID", default=None)
-
-    admin_id = Auth.is_auth(auth_token, db)
-
-    if admin_id is None:
-        return redirect(url_for('login'))
-    
-    if not Auth.is_super_admin(admin_id, db):
-        return make_response("UNAUTHORIZED", 401)
-
     usrId = request.form.get("id")
 
     lastname = str(request.form.get("lastname"))
@@ -464,18 +297,8 @@ def superEditUser():
         return make_response("BAD REQUEST", 400)
 
 @super_admin_bp.route('/confirmUser', methods=['POST'])
-# @app.route('/superAdminPannel/', methods=['POST'])
+@role_required("super_admin")
 def superConfirmUser():
-    auth_token = request.cookies.get('SESSID', default=None)
-
-    admin_id = Auth.is_auth(auth_token, db)
-
-    if admin_id is None:
-        return redirect(url_for('login'))
-
-    if not Auth.is_super_admin(admin_id, db):
-        return make_response('UNAUTHORIZED', 401)
-
     to_confirm_user = str(request.form.get('USR_ID'))
 
     try:
@@ -501,18 +324,8 @@ def superConfirmUser():
     return make_response('OK', 200)
 
 @super_admin_bp.route('/deleteUser', methods=['POST'])
-# @app.route('/superAdminPannel/', methods=['POST'])
+@role_required("super_admin")
 def superDeleteUser():
-    auth_token = request.cookies.get("SESSID", default=None)
-
-    usr_id = Auth.is_auth(auth_token, db)
-
-    if usr_id is None:
-        return redirect(url_for('login'))
-    
-    if not Auth.is_super_admin(usr_id, db):
-        return make_response('UNAUTHORIZED', 401)
-
     usr_to_delete = request.form.get('usrId', default=None)
 
     if usr_to_delete is None:
@@ -532,18 +345,8 @@ def superDeleteUser():
     return make_response('OK', 200)
 
 @super_admin_bp.route('/exportUsers', methods=['GET'])
-# @app.route('/superAdminPannel/', methods=['GET'])
+@role_required("super_admin")
 def superAdminExportUsers():
-    auth_token = request.cookies.get("SESSID", default=None)
-
-    admin_id = Auth.is_auth(auth_token, db)
-
-    if admin_id is None:
-        return redirect(url_for('login'))
-
-    if not Auth.is_super_admin(admin_id, db):
-        return make_response('UNAUTHORIZED', 401)
-
     users = db.read(db_requests.GET_USERS_AND_ADMIN)
 
     # Create the csv
@@ -578,15 +381,8 @@ def superAdminExportUsers():
     return response
 
 @super_admin_bp.route('/getAllBookings', methods=['GET'])
-# @app.route('/superAdminPannel/', methods=['GET'])
+@role_required("super_admin")
 def superGetAllBookingsFromEntity():
-    auth_token = request.cookies.get("SESSID", default=None)
-
-    admin_id = Auth.is_auth(auth_token, db)
-
-    if not Auth.is_super_admin(admin_id, db):
-        return make_response("UNAUTHORIZED", 401)
-    
     # Fetch bookings for admin's entity
     dbBookings = db.read(db_requests.GET_ALL_CURRENT_BOOKINGS)
 
@@ -630,15 +426,8 @@ def superGetAllBookingsFromEntity():
     return make_response(jsonify(entityBookings), 200)
 
 @super_admin_bp.route('/getAllUsers', methods=['GET'])
-# @app.route('/superAdminPannel/', methods=['GET'])
+@role_required("super_admin")
 def getAllUsers():
-    auth_token = request.cookies.get("SESSID", default=None)
-
-    admin_id = Auth.is_auth(auth_token, db)
-
-    if not Auth.is_super_admin(admin_id, db):
-        return make_response("UNAUTHORIZED", 401)
-
     users = db.read(db_requests.GET_USERS_AND_ADMIN)
     users_list = list()
     for u in users:
@@ -658,15 +447,8 @@ def getAllUsers():
     return make_response(users_list, 200)
 
 @super_admin_bp.route('/fetchUserPlates', methods=['GET'])
-# @app.route('/superAdminPannel/', methods=['GET'])
+@role_required("super_admin")
 def superAdminPannelUserPlates():
-    auth_token = request.cookies.get('SESSID', default=None)
-
-    admin_id = Auth.is_auth(auth_token, db)
-
-    if not Auth.is_super_admin(admin_id, db):
-        return make_response('UNAUTHORIZED', 401)
-    
     user_id = request.args.get('usrID', default=None)
 
     if user_id is None:
@@ -677,18 +459,8 @@ def superAdminPannelUserPlates():
 
 
 @super_admin_bp.route('/newaccount', methods=['POST'])
-# @app.route('/superAdminPannel/', methods=['POST'])
+@role_required("super_admin")
 def superAdminSubmitAccount():
-    token = request.cookies.get("SESSID", default=None)
-
-    admin_id = Auth.is_auth(token, db)
-
-    if admin_id is None:
-        return redirect(url_for('login'))
-    
-    if not Auth.is_super_admin(admin_id, db):
-        return make_response("UNAUTHORIZED", 401)
-
     # Check if an account already exists with this email or id
     req_data = dict(request.form)
 
@@ -748,19 +520,9 @@ def superAdminSubmitAccount():
     return make_response("CREATED", 201)
 
 @super_admin_bp.route('/newadminaccount', methods=['POST'])
-# @app.route('/superAdminPannel/', methods=['POST'])
+@role_required("super_admin")
 def superAdminSubmitAdminAccount():
-    token = request.cookies.get("SESSID", default=None)
-
-    super_admin_id = Auth.is_auth(token, db)
-
-    if super_admin_id is None:
-        return redirect(url_for('login'))
-    
-    if not Auth.is_super_admin(super_admin_id, db):
-        return make_response("UNAUTHORIZED", 401)
-    
-        # Check if an account already exists with this email or id
+    # Check if an account already exists with this email or id
     req_data = dict(request.form)
 
     if len(db.read(db_requests.GET_USER_INFO_BY_MAIL.format(
@@ -823,18 +585,8 @@ def superAdminSubmitAdminAccount():
 
 
 @super_admin_bp.route('/allocation/addEntity', methods=['POST'])
-# @app.route('/superAdminPannel/', methods=['POST'])
+@role_required("super_admin")
 def superAdminAddEntity():
-    token = request.cookies.get('SESSID', default=None)
-
-    super_admin_id = Auth.is_auth(token, db)
-
-    if super_admin_id is None:
-        return redirect(url_for('login'))
-    
-    if not Auth.is_super_admin(super_admin_id, db):
-        return make_response("UNAUTHORIZED", 401)
-
     entity_name = request.form.get('name', default=None)
     entity_nbPlacesAllocated = request.form.get('nbPlacesAllocated', default=None)
     entity_nbFreePlaces = 100
@@ -871,18 +623,8 @@ def superAdminAddEntity():
     return make_response("OK", 200)
 
 @super_admin_bp.route('/allocation/deleteEntity', methods=['POST'])
-# @app.route('/superAdminPannel/', methods=['POST'])
+@role_required("super_admin")
 def superAdminDeleteEntity():
-    token = request.cookies.get('SESSID', default=None)
-
-    super_admin_id = Auth.is_auth(token, db)
-
-    if super_admin_id is None:
-        return redirect(url_for('login'))
-    
-    if not Auth.is_super_admin(super_admin_id, db):
-        return make_response("UNAUTHORIZED", 401)
-
     entity_id = request.form.get('id', default=None)
 
     if entity_id is None:
@@ -893,7 +635,7 @@ def superAdminDeleteEntity():
     return make_response("OK", 200)
 
 @super_admin_bp.route('/getbooking', methods=['GET'])
-# @app.route('/', methods=['GET'])
+@role_required("super_admin")
 def get_booking():
     token = request.cookies.get("SESSID", default=None)
 
@@ -932,9 +674,8 @@ def get_booking():
     return make_response(booking, 200)
 
 @super_admin_bp.route('/addUserBooking', methods=['POST'])
-# @app.route('/superAdminPannel/', methods=['POST'])
+@role_required("super_admin")
 def superAddUserBooking():
-    token = request.cookies.get('SESSID', default=None)
 
     # Récupérer les places disponibles sur la période de temps
     """
@@ -944,15 +685,6 @@ def superAddUserBooking():
         - Vérification si périodicité est valide sur la période demandée (nécessite de changer la db et d'orienter les tables sur des plages de temps)
     
     """
-
-    admin_user = Auth.is_auth(token, db)
-
-    if admin_user is None:
-        return redirect(url_for('login'), 302)
-
-    if not Auth.is_super_admin(admin_user, db):
-        return make_response('UNAUTHORIZED', 401)
-
 
     usr = request.form.get('usrId')
     plate = request.form.get('plate').upper()
@@ -1013,17 +745,8 @@ def superAddUserBooking():
 
 
 @super_admin_bp.route('/deleteUserBooking', methods=['DELETE'])
-# @app.route("/superAdminPannel/", methods=["DELETE"])
+@role_required("super_admin")
 def superDeleteUserBooking():
-    token = request.cookies.get('SESSID', default=None)
-
-    admin_usr = Auth.is_auth(token, db)
-
-    if admin_usr is None:
-        return make_response('INVALID TOKEN', 403)
-
-    if not Auth.is_super_admin(admin_usr, db):
-        return make_response('UNAUTHORIZED', 401)
 
     booking_id = request.form.get('id')
     usr_id = request.form.get('usrId')

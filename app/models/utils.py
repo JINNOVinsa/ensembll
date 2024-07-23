@@ -433,7 +433,7 @@ if __name__ == "__main__":
     from api.apiInterface import APIinterface
 
     load_dotenv()
-    db = DbInputStream('127.0.0.1', 3306, getenv("DB_ID"), getenv("DB_PSWD"))
+    db = DbInputStream('mysql-app', 3306, getenv("DB_ID"), getenv("DB_PSWD"))
     api_log = getenv("API_PARKKI_LOG")
     api_token = getenv("API_PARKKI_TOKEN")
 

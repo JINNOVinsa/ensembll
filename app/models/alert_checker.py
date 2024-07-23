@@ -12,8 +12,8 @@ load_dotenv()
 
 TIME_DELTA = 8*60_000   # 8 minutes
 
-db = DbInputStream("127.0.0.1", getenv("DB_PORT"), getenv("DB_ID"), getenv("DB_PSWD"))
-db_flow = DbInputStream("127.0.0.1", getenv("DB_PORT"), getenv("DB_FLOW_ID"), getenv("DB_FLOW_PSWD"), database=getenv("DB_FLOW_NAME"))
+db = DbInputStream("mysql-app", getenv("DB_PORT"), getenv("DB_ID"), getenv("DB_PSWD"))
+db_flow = DbInputStream("mysql-flow", getenv("DB_PORT"), getenv("DB_FLOW_ID"), getenv("DB_FLOW_PSWD"), database=getenv("DB_FLOW_NAME"))
 
 while True:
     print("[*] Start an alert checking")

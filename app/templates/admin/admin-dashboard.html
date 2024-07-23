@@ -196,14 +196,14 @@
         <h2 id="park-duration-headline">Durée de stationnement</h2>
 
         <div class="wrapper">
-            <form action="{{url_for('get_parkduration_plate')}}" id="park-duration-by-plate">
+            <form action="{{url_for('stats.get_parkduration_plate')}}" id="park-duration-by-plate">
                 <label for="plate-duration">Par plaque:</label>
                 <input type="text" name="plate-duration" id="plate-duration-input" placeholder="AA-123-AA">
     
                 <button type="submit">Recherche par plaque</button>
             </form>
             
-            <form id="park-duration-by-entity" action="{{url_for('get_parkduration_entity')}}">
+            <form id="park-duration-by-entity" action="{{url_for('stats.get_parkduration_entity')}}">
                 <label for="entity-duration">Par structure:</label>
                 <select name="entity-duration" id="entity-duration-selector">
                     {% for e in entities %}

@@ -9,7 +9,7 @@ from api import apiUrls
 
 load_dotenv()
 
-db = DbInputStream('127.0.0.1', int(getenv("DB_PORT")), getenv("DB_ID"), getenv("DB_PSWD"))
+db = DbInputStream('mysql-app', int(getenv("DB_PORT")), getenv("DB_ID"), getenv("DB_PSWD"))
 
 api_log = getenv("API_PARKKI_LOG")
 api_token = getenv("API_PARKKI_TOKEN")
