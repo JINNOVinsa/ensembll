@@ -21,7 +21,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Exposer le port sur lequel l'application va écouter
-EXPOSE 5000
+EXPOSE 8000
 
-# Définir la commande par défaut pour exécuter l'application
-CMD ["python", "app.py"]
+# Définir la commande par défaut pour exécuter l'application avec Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "app:app"]

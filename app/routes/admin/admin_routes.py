@@ -313,8 +313,8 @@ def deleteUser():
     db.write(db_requests.DELETE_USER_TOKEN_BY_ID.format(id=str(usr_to_delete)))
     db.write(db_requests.DELETE_USER_CREDENTIALS_BY_ID.format(id=str(usr_to_delete)))
     db.write(db_requests.DELETE_USER_PLATES.format(id=str(usr_to_delete)))
-    db.write(db_requests.DELETE_USER_BY_ID.format(id=str(usr_to_delete)))
     db.write(db_requests.DELETE_USER_RGPD_BY_ID.format(usrId=str(usr_to_delete)))
+    db.write(db_requests.DELETE_USER_BY_ID.format(id=str(usr_to_delete)))
 
     api.delete_api(apiUrls.DELETE_USER, path_payload={'id': usr_to_delete})
     return make_response('OK', 200)

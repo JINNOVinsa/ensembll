@@ -67,11 +67,11 @@ def home():
 
     # Get user bookings
     usr_bookings = db.read(db_requests.GET_USER_BOOKINGS.format(usrId=usr_id))
-    logging.basicConfig(level=logging.DEBUG)
     bookings = list()
     for b in usr_bookings:
-        logging.debug("Boo ------------------------------------------")
-        logging.debug(b[4])
+        # logging.basicConfig(level=logging.DEBUG)
+        # logging.debug("Boo ------------------------------------------")
+        # logging.debug(b[4])
         startL = list(str(b[4].strftime("%d %B %Y %H:%M")))
         startL[3] = chr(ord(startL[3])-32)
 
@@ -934,4 +934,4 @@ def admin_notifications_delete():
     return make_response("OK", 200)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=8000)
